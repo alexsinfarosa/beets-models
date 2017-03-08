@@ -24,9 +24,9 @@ class App extends Component {
   render() {
     this.fetchAllStations();
     const { stations } = this.props.store.app;
-    const stationList = stations.slice(1, 10).map((station, i) => (
+    const stationList = stations.slice(0, 30).map((station, i) => (
       <small key={`${station.id} ${station.network}`}>
-        {i} - {station.name}
+        {station.id} {station.network} {station.name}
       </small>
     ));
     return (
