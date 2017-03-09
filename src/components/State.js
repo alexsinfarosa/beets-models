@@ -2,45 +2,43 @@ import React, { Component } from "react";
 import { inject, observer } from "mobx-react";
 import { observable, action } from "mobx";
 
+// Utilities
+import { states } from "../utils";
+
 // styled-components
 import { Select, Selector } from "./styles";
 
 @inject("store")
 @observer
-class Pest extends Component {
+class State extends Component {
   @observable isDisabled = false;
   @action setIsDisabled = d => this.isDisabled = d;
 
   handleChange = e => {
     this.setIsDisabled(true);
-    this.props.store.app.setPest(e.target.value);
-    this.props.store.app.setPestR(e.target.value);
+    this.props.store.app.setState(e.target.value);
+    this.props.store.app.setStateR(e.target.value);
   };
 
   render() {
-    const { pests, pest } = this.props.store.app;
-
-    const pestList = pests.map(pest => (
-      <option key={pest.id} value={pest.informalName}>
-        {pest.informalName}
-      </option>
+    const { state } = this.props.store.app;
+    const stateList = states.map(state => (
+      <option key={state.postalCode}>{state.name}</option>
     ));
 
     return (
       <Selector>
-        <label>Pest:</label>
+        <label>State:</label>
         <Select
-          name="pest"
-          autoFocus
-          value={pest.informalName}
+          name="state"
+          value={state.name}
           onChange={this.handleChange}
         >
-          {this.isDisabled ? null : <option>Select Pest</option>}
-          {pestList}
+          {this.isDisabled ? null : <option>Select State</option>}
+          {stateList}
         </Select>
       </Selector>
     );
   }
 }
-
-export default Pest;
+export default State;
