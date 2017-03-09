@@ -4,7 +4,10 @@ import { inject, observer } from "mobx-react";
 import axios from "axios";
 
 // styled-components
-import { Page, MyApp } from "./styles";
+import { Page, MyApp, Main, LeftContainer, RightContainer } from "./styles";
+
+// components
+import Pest from './components/Pest';
 
 @inject("store")
 @observer
@@ -22,9 +25,9 @@ class App extends Component {
   };
 
   render() {
-    this.fetchAllStations();
+    // this.fetchAllStations();
     const { stations } = this.props.store.app;
-    const stationList = stations.slice(0, 30).map((station, i) => (
+    const stationList = stations.slice(0, 50).map((station, i) => (
       <small key={`${station.id} ${station.network}`}>
         {station.id} {station.network} {station.name}
       </small>
@@ -32,7 +35,15 @@ class App extends Component {
     return (
       <Page>
         <MyApp>
-          {stationList}
+          <h2>Beets Model</h2>
+          <Main>
+            <LeftContainer>
+              <Pest />
+            </LeftContainer>
+            <RightContainer>
+              Right
+            </RightContainer>
+          </Main>
         </MyApp>
       </Page>
     );
