@@ -161,6 +161,14 @@ export const unflattenArray = data => {
   return arr;
 };
 
+export const noonToNoon = data => {
+  const arr = [];
+  while (data.length > 24) {
+    arr.push(data.splice(12, 24));
+  }
+  return arr;
+};
+
 // compute degree days
 export const calculateDegreeDay = (pest, data) => {
   console.log(`number of days: ${flattenArray(data).length}`);

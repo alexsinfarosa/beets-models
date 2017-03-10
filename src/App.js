@@ -1,10 +1,11 @@
 import React, { Component } from "react";
 import { inject, observer } from "mobx-react";
 import { when } from "mobx";
-import DevTools from "mobx-react-devtools";
+// import DevTools from "mobx-react-devtools";
 import { BrowserRouter as Router, Route, Redirect } from "react-router-dom";
 import axios from "axios";
 import { format, addDays } from "date-fns";
+import _ from "lodash";
 
 // utility functions
 import {
@@ -98,6 +99,8 @@ class App extends Component {
         if (!res.data.hasOwnProperty("error")) {
           this.props.store.app.setACISData(res.data.data);
           const acisFlat = flattenArray(res.data.data);
+          console.log(acisFlat);
+          console.log(unflattenArray(acisFlat));
           const acis = replaceSingleMissingValues(acisFlat);
           if (acis.filter(e => e === "M").length === 0) {
             this.props.store.app.setDegreeDays(
@@ -115,12 +118,11 @@ class App extends Component {
   }
 
   render() {
-    const { state, isSubmitted } = this.props.store.app;
-    console.log(this.props.store.app.ACISData.slice());
+    const { state, isSubmitted, ACISData } = this.props.store.app;
     return (
       <Router>
         <Page>
-          <DevTools />
+          {/* <DevTools /> */}
           <MyApp>
             <h2 style={{ marginTop: "0" }}>Beet Model</h2>
             <Main>
