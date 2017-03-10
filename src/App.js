@@ -20,10 +20,11 @@ import {
 import Pest from "./components/Pest";
 import State from "./components/State";
 import Station from "./components/Station";
+import Calendar from "./components/Calendar";
 
 // views
 import TheMap from "./views/TheMap";
-// import Results from '../../views/Results/Results'
+import Results from "./views/Results/Results";
 import MoreInfo from "./views/MoreInfo";
 
 @inject("store")
@@ -51,10 +52,21 @@ class App extends Component {
       });
   };
 
-  calculate = () => {};
+  calculate = () => {
+    const { pest, state, station, endDate } = this.props.store.app;
+    this.props.store.app.setPestR(pest);
+    this.props.store.app.setStateR(state);
+    this.props.store.app.setStationR(station);
+    this.props.store.app.setEndDateR(endDate);
+
+    this.props.store.app.setIsSubmitted(true);
+    this.props.store.app.setIsLoading(true);
+    console.log("clicked!");
+  };
 
   render() {
-    const { state } = this.props.store.app;
+    const { state, isSubmitted, isLoading } = this.props.store.app;
+    console.log(isSubmitted, isLoading);
     return (
       <Router>
         <Page>
@@ -68,6 +80,8 @@ class App extends Component {
                 <State />
                 <br />
                 <Station />
+                <br />
+                <Calendar />
                 <br />
                 <CalculateBtn onClick={this.calculate}>Calculate</CalculateBtn>
 
@@ -88,6 +102,13 @@ class App extends Component {
                     Object.keys(state).length !== 0 && <Redirect to="/map" />}
                 />
                 <Route path="/map" component={TheMap} />
+
+                <Route
+                  path="/"
+                  render={() => isSubmitted && <Redirect to="/results" />}
+                />
+                <Route path="/results" component={Results} />
+
                 <Route path="/moreinfo" component={MoreInfo} />
 
               </RightContainer>

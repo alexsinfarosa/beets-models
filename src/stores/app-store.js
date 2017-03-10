@@ -1,8 +1,14 @@
 import { observable, action, computed } from "mobx";
 import pestData from "../../public/pestData.json";
 import { states, matchIconsToStations } from "../utils";
+import { format } from "date-fns";
 
 export default class AppStore {
+  // logic---------------------------------------------------------------------------------------
+  @observable isSubmitted = false;
+  @action setIsSubmitted = d => this.isSubmitted = d;
+  @observable isLoading = false;
+  @action setIsLoading = d => this.isLoading = d;
   //Pest-----------------------------------------------------------------------------------------
   @observable pests = pestData;
   @observable pest = JSON.parse(localStorage.getItem("pest")) || {};
@@ -22,7 +28,7 @@ export default class AppStore {
     localStorage.setItem("state", JSON.stringify(this.state));
   };
   @observable stateR = {};
-  @action setStateR = d => this.localState = d;
+  @action setStateR = d => this.stateR = d;
 
   //Station--------------------------------------------------------------------------------------
   @observable stations = [];
@@ -44,4 +50,16 @@ export default class AppStore {
   };
   @observable stationR = {};
   @action setStationR = d => this.stationR = d;
+
+  // Dates---------------------------------------------------------------------------------------
+  @observable endDate = format(new Date(), "YYYY-MM-DD");
+  @action setEndDate = d => this.endDate = format(d, "YYYY-MM-DD");
+  @computed get startDate() {
+    return `${format(this.endDate, "YYYY")}-01-01`;
+  }
+  @observable endDateR = format(new Date(), "YYYY-MM-DD");
+  @action setEndDateR = d => this.endDateR = format(d, "YYYY-MM-DD");
+  @computed get startDateR() {
+    return `${format(this.endDateR, "YYYY")}-01-01`;
+  }
 }

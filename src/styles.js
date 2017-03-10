@@ -12,8 +12,8 @@ export const Page = styled.div`
 export const MyApp = styled.div`
   border: 1px solid #eee;
   border-radius: 5px;
-  width: 870px;
-  height: 650px;
+  width: 915px;
+  height: 715px;
   overflow-y: auto;
   display: flex;
   flex-direction: column;
@@ -82,6 +82,8 @@ export const NavLinkStyled = styled(NavLink)`
 
   &:visited {
     color: #544C45;
+    background-color: #F4F0EC;
+    margin-bottom: -1px;
   }
   &:focus {
     color: #b85700;

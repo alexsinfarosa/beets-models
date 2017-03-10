@@ -32,3 +32,8 @@ export const CalculateBtn = styled.button`
     outline: none;
   }
 `;
+
+export const OptionDefault = styled.option`
+  color: red;
+  opacity: 0.7;
+`;

@@ -8,13 +8,18 @@ import { Select, Selector } from "./styles";
 @inject("store")
 @observer
 class Pest extends Component {
+  constructor(props) {
+    super(props);
+    if (this.props.store.app.pest.informalName) {
+      this.setIsDisabled(true);
+    }
+  }
   @observable isDisabled = false;
   @action setIsDisabled = d => this.isDisabled = d;
 
   handleChange = e => {
     this.setIsDisabled(true);
     this.props.store.app.setPest(e.target.value);
-    this.props.store.app.setPestR(e.target.value);
   };
 
   render() {

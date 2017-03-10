@@ -8,13 +8,18 @@ import { Select, Selector } from "./styles";
 @inject("store")
 @observer
 class Station extends Component {
+  constructor(props) {
+    super(props);
+    if (this.props.store.app.station.name) {
+      this.setIsDisabled(true);
+    }
+  }
   @observable isDisabled = false;
   @action setIsDisabled = d => this.isDisabled = d;
 
   handleChange = e => {
     this.setIsDisabled(true);
     this.props.store.app.setStation(e.target.value);
-    this.props.store.app.setStationR(e.target.value);
   };
 
   render() {

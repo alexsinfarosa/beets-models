@@ -23,7 +23,7 @@ export const Link = styled.a`
 `;
 
 export const MapContainer = styled(Map)`
-  height: 520px;
+  height: 558px;
   width: 100%;
   margin: 0 auto;
 `;
