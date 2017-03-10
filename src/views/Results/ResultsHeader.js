@@ -3,7 +3,7 @@ import { inject, observer } from "mobx-react";
 import { format } from "date-fns";
 
 // styled-components
-import { Center } from "./styles";
+import { CenterText } from "./styles";
 
 @inject("store")
 @observer
@@ -18,24 +18,22 @@ export default class ResultsHeader extends Component {
       missingValue
     } = this.props.store.app;
 
-    const displayEndDate = format(endDateR, "MM/DD/YYYY");
-    const displayStartDate = format(startDateR, "MM/DD/YYYY");
     return (
       <div>
-        <Center>
+        <CenterText>
           <h4>{pestR.informalName} Results for {stationR.name}</h4>
-        </Center>
-        <Center>
+        </CenterText>
+        <CenterText>
           <h5>
             Accumulated Degree Days (
             {pestR.baseTemp}
             °F)
             {" "}
-            {displayStartDate}
+            {format(startDateR, "MM/DD/YYYY")}
             {" "}
             through
             {" "}
-            {displayEndDate}
+            {format(endDateR, "MM/DD/YYYY")}
             :
             {" "}
             {currentCDD}
@@ -43,7 +41,7 @@ export default class ResultsHeader extends Component {
               ({missingValue} {missingValue > 1 ? "days" : "day"} missing)
             </span>
           </h5>
-        </Center>
+        </CenterText>
       </div>
     );
   }

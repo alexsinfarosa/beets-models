@@ -8,7 +8,7 @@ import Spinner from "react-spinkit";
 
 // Components
 import ResultsHeader from "./ResultsHeader";
-// import ResultsTable from './ResultsTable';
+// import ResultsTable from "./ResultsTable";
 // import ResultsStage from './ResultsStage';
 
 // style
@@ -16,15 +16,16 @@ import ResultsHeader from "./ResultsHeader";
 
 //  styled-components
 import { Wrapper } from "../styles";
+import { Centered } from "./styles";
 
 @inject("store")
 @observer
 export default class Results extends Component {
   render() {
     const { isLoading } = this.props.store.app;
-    if (!isLoading) {
+    if (isLoading) {
       return (
-        <div className="centered">
+        <Centered>
           Loading
           {" "}
           <Spinner
@@ -32,7 +33,7 @@ export default class Results extends Component {
             noFadeIn
             style={{ marginLeft: "10px" }}
           />
-        </div>
+        </Centered>
       );
     } else {
       return (

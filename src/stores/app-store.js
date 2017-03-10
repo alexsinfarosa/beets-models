@@ -7,8 +7,10 @@ export default class AppStore {
   // logic---------------------------------------------------------------------------------------
   @observable isSubmitted = false;
   @action setIsSubmitted = d => this.isSubmitted = d;
-  @observable isLoading = false;
+  @observable isLoading = true;
   @action setIsLoading = d => this.isLoading = d;
+  @observable missingValue = 0;
+  @action setMissingValue = d => this.missingValue = d;
   //Pest-----------------------------------------------------------------------------------------
   @observable pests = pestData;
   @observable pest = JSON.parse(localStorage.getItem("pest")) || {};
@@ -61,5 +63,34 @@ export default class AppStore {
   @action setEndDateR = d => this.endDateR = format(d, "YYYY-MM-DD");
   @computed get startDateR() {
     return `${format(this.endDateR, "YYYY")}-01-01`;
+  }
+
+  // ACISData -----------------------------------------------------------------------------------
+  @observable ACISData = [];
+  @action setACISData = d => this.ACISData = d;
+  @computed get allDates() {
+    return this.ACISData.map(e => e[0]);
+  }
+
+  // degreeDay -----------------------------------------------------------------------------------
+  @observable degreeDays = [];
+  @action setDegreeDays = d => this.degreeDays = d;
+  @computed get cumulativeDegreeDays() {
+    const arr = [];
+    this.degreeDays.reduce((prev, curr, i) => arr[i] = prev + curr, 0);
+    return arr;
+  }
+  @computed get currentCDD() {
+    return this.cumulativeDegreeDays[this.cumulativeDegreeDays.length - 6];
+  }
+  @computed get cumulativeDegreeDayDataGraph() {
+    const arr = [];
+    this.ACISData.forEach((e, i) => {
+      const newObj = {};
+      newObj["Date"] = format(this.ACISData[i][0], "MMM D");
+      newObj["Accumulated Degree-Days"] = this.cumulativeDegreeDays[i];
+      arr.push(newObj);
+    });
+    return arr;
   }
 }

@@ -1,8 +1,23 @@
 import React, { Component } from "react";
 import { inject, observer } from "mobx-react";
 import { when } from "mobx";
+import DevTools from "mobx-react-devtools";
 import { BrowserRouter as Router, Route, Redirect } from "react-router-dom";
 import axios from "axios";
+import { format, addDays } from "date-fns";
+
+// utility functions
+import {
+  networkTemperatureAdjustment,
+  michiganIdAdjustment,
+  flattenArray,
+  unflattenArray,
+  calculateDegreeDay,
+  replaceSingleMissingValues,
+  replaceConsecutiveMissingValues,
+  // weightedAverage,
+  calculateMissingValues
+} from "./utils";
 
 // styled-components
 import {
@@ -59,17 +74,53 @@ class App extends Component {
     this.props.store.app.setStationR(station);
     this.props.store.app.setEndDateR(endDate);
 
+    this.getACISData();
     this.props.store.app.setIsSubmitted(true);
-    this.props.store.app.setIsLoading(true);
+    this.props.store.app.setIsLoading(false);
     console.log("clicked!");
   };
 
+  getACISData() {
+    const { pest, station, startDate, endDate } = this.props.store.app;
+
+    const params = {
+      sid: `${michiganIdAdjustment(station)} ${station.network}`,
+      sdate: startDate,
+      edate: format(addDays(endDate, 5), "YYYY-MM-DD"),
+      elems: networkTemperatureAdjustment(station.network)
+    };
+
+    console.log(params);
+
+    return axios
+      .post("http://data.test.rcc-acis.org/StnData", params)
+      .then(res => {
+        if (!res.data.hasOwnProperty("error")) {
+          this.props.store.app.setACISData(res.data.data);
+          const acisFlat = flattenArray(res.data.data);
+          const acis = replaceSingleMissingValues(acisFlat);
+          if (acis.filter(e => e === "M").length === 0) {
+            this.props.store.app.setDegreeDays(
+              calculateDegreeDay(pest, unflattenArray(acis))
+            );
+            return;
+          }
+          return acis;
+        }
+        console.log(res.data.error);
+      })
+      .catch(err => {
+        console.log(err);
+      });
+  }
+
   render() {
-    const { state, isSubmitted, isLoading } = this.props.store.app;
-    console.log(isSubmitted, isLoading);
+    const { state, isSubmitted } = this.props.store.app;
+    console.log(this.props.store.app.ACISData.slice());
     return (
       <Router>
         <Page>
+          <DevTools />
           <MyApp>
             <h2 style={{ marginTop: "0" }}>Beet Model</h2>
             <Main>

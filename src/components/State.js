@@ -26,7 +26,6 @@ class State extends Component {
   };
 
   render() {
-    const { state } = this.props.store.app;
     const stateList = states.map(state => (
       <option key={state.postalCode}>{state.name}</option>
     ));
@@ -34,7 +33,11 @@ class State extends Component {
     return (
       <Selector>
         <label>State:</label>
-        <Select name="state" value={state.name} onChange={this.handleChange}>
+        <Select
+          name="state"
+          value={this.props.store.app.state.name}
+          onChange={this.handleChange}
+        >
           {this.isDisabled ? null : <option>Select State</option>}
           {stateList}
         </Select>
