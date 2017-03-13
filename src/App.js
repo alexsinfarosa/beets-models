@@ -15,9 +15,9 @@ import {
   unflattenArray,
   calculateDegreeDay,
   replaceSingleMissingValues,
-  replaceConsecutiveMissingValues,
+  // replaceConsecutiveMissingValues,
   // weightedAverage,
-  calculateMissingValues
+  // calculateMissingValues
 } from "./utils";
 
 // styled-components
@@ -33,6 +33,7 @@ import {
 } from "./styles";
 
 // components
+import Testing from "./components/Testing";
 import Pest from "./components/Pest";
 import State from "./components/State";
 import Station from "./components/Station";
@@ -119,11 +120,13 @@ class App extends Component {
 
   render() {
     const { state, isSubmitted, ACISData } = this.props.store.app;
+    console.log(`${ACISData.slice()}`)
     return (
       <Router>
         <Page>
           {/* <DevTools /> */}
           <MyApp>
+            <Testing />
             <h2 style={{ marginTop: "0" }}>Beet Model</h2>
             <Main>
               <LeftContainer>
