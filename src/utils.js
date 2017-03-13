@@ -162,11 +162,20 @@ export const unflattenArray = data => {
 };
 
 export const noonToNoon = data => {
+  const dates = data.map(day => day[0]);
+  const hourlyData = data.map(day => day[1]);
+  const hourlyDataFlat = [].concat(...hourlyData)
+
   const arr = [];
-  while (data.length > 24) {
-    arr.push(data.splice(12, 24));
+  while (hourlyDataFlat.length > 24) {
+    arr.push(hourlyDataFlat.splice(12, 24));
   }
-  return arr;
+
+  let res = {}
+  arr.forEach((day,i) => {
+    res[dates[i]] = day
+  })
+  return res
 };
 
 // compute degree days

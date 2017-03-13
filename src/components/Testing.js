@@ -16,6 +16,7 @@ const noonToNoon = data => {
   while (hourlyDataFlat.length > 24) {
     arr.push(hourlyDataFlat.splice(12, 24));
   }
+  
   let res = {}
   arr.forEach((day,i) => {
     res[dates[i]] = day
