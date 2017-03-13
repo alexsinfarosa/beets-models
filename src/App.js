@@ -9,15 +9,10 @@ import _ from "lodash";
 
 // utility functions
 import {
+  noonToNoon,
+  networkHumidityAdjustment,
   networkTemperatureAdjustment,
-  michiganIdAdjustment,
-  flattenArray,
-  unflattenArray,
-  calculateDegreeDay,
-  replaceSingleMissingValues,
-  // replaceConsecutiveMissingValues,
-  // weightedAverage,
-  // calculateMissingValues
+  michiganIdAdjustment
 } from "./utils";
 
 // styled-components
@@ -33,8 +28,8 @@ import {
 } from "./styles";
 
 // components
-// import Testing from "./components/Testing";
-import Pest from "./components/Pest";
+import Testing from "./components/Testing";
+import Disease from "./components/Disease";
 import State from "./components/State";
 import Station from "./components/Station";
 import Calendar from "./components/Calendar";
@@ -70,8 +65,8 @@ class App extends Component {
   };
 
   calculate = () => {
-    const { pest, state, station, endDate } = this.props.store.app;
-    this.props.store.app.setPestR(pest);
+    const { disease, state, station, endDate } = this.props.store.app;
+    this.props.store.app.setDiseaseR(disease);
     this.props.store.app.setStateR(state);
     this.props.store.app.setStationR(station);
     this.props.store.app.setEndDateR(endDate);
@@ -83,13 +78,17 @@ class App extends Component {
   };
 
   getACISData() {
-    const { pest, station, startDate, endDate } = this.props.store.app;
+    const { station, startDate, endDate } = this.props.store.app;
 
     const params = {
       sid: `${michiganIdAdjustment(station)} ${station.network}`,
       sdate: startDate,
-      edate: format(addDays(endDate, 5), "YYYY-MM-DD"),
-      elems: networkTemperatureAdjustment(station.network)
+      // Plus 6 days because we account for the noonToNoon function
+      edate: format(addDays(endDate, 6), "YYYY-MM-DD"),
+      elems: [
+        networkTemperatureAdjustment(station.network),
+        networkHumidityAdjustment(station.network)
+      ]
     };
 
     console.log(params);
@@ -98,18 +97,10 @@ class App extends Component {
       .post("http://data.test.rcc-acis.org/StnData", params)
       .then(res => {
         if (!res.data.hasOwnProperty("error")) {
-          this.props.store.app.setACISData(res.data.data);
-          const acisFlat = flattenArray(res.data.data);
-          console.log(acisFlat);
-          console.log(unflattenArray(acisFlat));
-          const acis = replaceSingleMissingValues(acisFlat);
-          if (acis.filter(e => e === "M").length === 0) {
-            this.props.store.app.setDegreeDays(
-              calculateDegreeDay(pest, unflattenArray(acis))
-            );
-            return;
-          }
-          return acis;
+          const data = noonToNoon(res.data.data);
+          this.props.store.app.setACISData(data);
+          // console.log(data.map(d => d.date));
+          return data;
         }
         console.log(res.data.error);
       })
@@ -119,18 +110,31 @@ class App extends Component {
   }
 
   render() {
+    // const {
+    //   diseaseR,
+    //   stationR,
+    //   startDateR,
+    //   endDateR
+    // } = this.props.store.app;
+
+    // console.log(diseaseR);
+    // console.log(toJS(diseaseR));
+    // console.log(toJS(stationR));
+    // console.log(startDateR);
+    // console.log(endDateR);
+
     const { state, isSubmitted } = this.props.store.app;
     return (
       <Router>
         <Page>
           {/* <DevTools /> */}
           <MyApp>
-            {/* <Testing /> */}
+            <Testing />
             <h2 style={{ marginTop: "0" }}>Beet Model</h2>
             <Main>
               <LeftContainer>
 
-                <Pest />
+                <Disease />
                 <br />
                 <State />
                 <br />

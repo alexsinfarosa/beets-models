@@ -7,10 +7,10 @@ import { Select, Selector } from "./styles";
 
 @inject("store")
 @observer
-class Pest extends Component {
+class Disease extends Component {
   constructor(props) {
     super(props);
-    if (this.props.store.app.pest.informalName) {
+    if (this.props.store.app.disease) {
       this.setIsDisabled(true);
     }
   }
@@ -19,33 +19,25 @@ class Pest extends Component {
 
   handleChange = e => {
     this.setIsDisabled(true);
-    this.props.store.app.setPest(e.target.value);
+    this.props.store.app.setDisease(e.target.value);
   };
 
   render() {
-    const { pests, pest } = this.props.store.app;
-
-    const pestList = pests.map(pest => (
-      <option key={pest.id} value={pest.informalName}>
-        {pest.informalName}
-      </option>
-    ));
-
     return (
       <Selector>
-        <label>Pest:</label>
+        <label>Disease:</label>
         <Select
-          name="pest"
+          name="disease"
           autoFocus
-          value={pest.informalName}
+          value={this.props.store.app.disease}
           onChange={this.handleChange}
         >
-          {this.isDisabled ? null : <option>Select Pest</option>}
-          {pestList}
+          {this.isDisabled ? null : <option>Select Disease</option>}
+          <option value="Cercospora Beticolaa">Cercospora Beticola</option>
         </Select>
       </Selector>
     );
   }
 }
 
-export default Pest;
+export default Disease;

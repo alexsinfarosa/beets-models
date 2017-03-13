@@ -16,20 +16,18 @@ export default class ResultsTable extends Component {
   @observable currentYear = format(new Date(), "YYYY");
 
   handleGraphClick = () => {
-    this.setIsGraphDisplayed(true);
+    this.setIsGraphDisplayed(!this.isGraphDisplayed);
   };
 
   render() {
     const {
-      pestR,
-      // cumulativeDegreeDays,
-      allDates,
-      // degreeDays,
+      dates,
       stationR,
-      endDateR
+      endDateR,
+      hums
     } = this.props.store.app;
 
-    const displayMonths = allDates.map(date => {
+    const displayMonths = dates.map(date => {
       if (isBefore(subDays(date, 1), endDateR)) {
         return (
           <th className="months before" key={date}>{format(date, "MMM D")}</th>
@@ -58,13 +56,19 @@ export default class ResultsTable extends Component {
         </th>
       );
     } else {
-      HeaderTable = <th className="after" colSpan="5"> Ensuing 5 Days</th>;
+      HeaderTable = (
+        <th className="after" colSpan="5">
+          {" "}Ensuing 5 Days
+        </th>
+      );
     }
 
-    // const displayDegreeDay = degreeDays.map((dd, i) => <td key={i}>{dd}</td>);
-    // const displayCumulativeDegreeDay = cumulativeDegreeDays.map((cdd, i) => (
-    //   <td key={i}>{cdd}</td>
-    // ));
+    const daily = hums.map((e, i) => {
+      const div = e.filter(d => d > 94 && d !== "M").length;
+      return <td key={i}>{div}</td>;
+    });
+    console.log(daily);
+    // const hr = hums.map((e, i) => <td key={i} {e.filter(a => a > 94).length} </td>);
 
     return (
       // <div>
@@ -80,16 +84,32 @@ export default class ResultsTable extends Component {
             </tr>
             <tr>
               <th>Date</th>
-              {/* {_.takeRight(displayMonths, 8)} */}
+              {_.takeRight(displayMonths, 8)}
             </tr>
           </thead>
           <tbody>
             <tr>
-              <th>Daily Degree Days <br /> (Base {pestR.baseTemp}BE)</th>
-              {/* {_.takeRight(displayDegreeDay, 8)} */}
+              <th>Daily Infection Value</th>
+              {_.takeRight(daily, 8)}
             </tr>
             <tr>
-              <th>Accumulation since <br /> January 1st</th>
+              <th>2-Day Accum Infection Values</th>
+              {/* {_.takeRight(daily, 8)} */}
+            </tr>
+            <tr>
+              <th>Daily Infection Risk</th>
+              {/* {_.takeRight(daily, 8)} */}
+            </tr>
+            <tr>
+              <th>14-Day Accum Infection Values</th>
+              {/* {_.takeRight(hr, 8)} */}
+            </tr>
+            <tr>
+              <th>21-Day Accum Infection Values</th>
+              {/* {_.takeRight(displayCumulativeDegreeDay, 8)} */}
+            </tr>
+            <tr>
+              <th>Season Total Infection Values</th>
               {/* {_.takeRight(displayCumulativeDegreeDay, 8)} */}
             </tr>
             <tr>

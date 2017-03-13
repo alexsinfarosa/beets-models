@@ -1,5 +1,4 @@
 import { observable, action, computed } from "mobx";
-import pestData from "../../public/pestData.json";
 import { states, matchIconsToStations } from "../utils";
 import { format } from "date-fns";
 
@@ -11,17 +10,15 @@ export default class AppStore {
   @action setIsLoading = d => this.isLoading = d;
   @observable missingValue = 0;
   @action setMissingValue = d => this.missingValue = d;
-  //Pest-----------------------------------------------------------------------------------------
-  @observable pests = pestData;
-  @observable pest = JSON.parse(localStorage.getItem("pest")) || {};
-  @action setPest = informalName => {
-    this.pest = this.pests.filter(pest => pest.informalName === informalName)[
-      0
-    ];
-    localStorage.setItem("pest", JSON.stringify(this.pest));
+
+  //Disease---------------------------------------------------------------------------------------
+  @observable disease = JSON.parse(localStorage.getItem("disease")) || "";
+  @action setDisease = d => {
+    this.disease = d;
+    localStorage.setItem("disease", JSON.stringify(this.disease));
   };
-  @observable pestR = {};
-  @action setPestR = d => this.pestR = d;
+  @observable diseaseR = "";
+  @action setDiseaseR = d => this.diseaseR = d;
 
   //State----------------------------------------------------------------------------------------
   @observable state = JSON.parse(localStorage.getItem("state")) || {};
@@ -57,40 +54,24 @@ export default class AppStore {
   @observable endDate = format(new Date(), "YYYY-MM-DD");
   @action setEndDate = d => this.endDate = format(d, "YYYY-MM-DD");
   @computed get startDate() {
-    return `${format(this.endDate, "YYYY")}-01-01`;
+    return `${format(this.endDate, "YYYY")}-06-15`;
   }
   @observable endDateR = format(new Date(), "YYYY-MM-DD");
   @action setEndDateR = d => this.endDateR = format(d, "YYYY-MM-DD");
   @computed get startDateR() {
-    return `${format(this.endDateR, "YYYY")}-01-01`;
+    return `${format(this.endDateR, "YYYY")}-06-15`;
   }
 
   // ACISData -----------------------------------------------------------------------------------
   @observable ACISData = [];
   @action setACISData = d => this.ACISData = d;
-  @computed get allDates() {
-    return this.ACISData.map(e => e[0]);
+  @computed get dates() {
+    return this.ACISData.map(e => e.date);
   }
-
-  // degreeDay -----------------------------------------------------------------------------------
-  @observable degreeDays = [];
-  @action setDegreeDays = d => this.degreeDays = d;
-  @computed get cumulativeDegreeDays() {
-    const arr = [];
-    this.degreeDays.reduce((prev, curr, i) => arr[i] = prev + curr, 0);
-    return arr;
+  @computed get hums() {
+    return this.ACISData.map(e => e.hum);
   }
-  @computed get currentCDD() {
-    return this.cumulativeDegreeDays[this.cumulativeDegreeDays.length - 6];
-  }
-  @computed get cumulativeDegreeDayDataGraph() {
-    const arr = [];
-    this.ACISData.forEach((e, i) => {
-      const newObj = {};
-      newObj["Date"] = format(this.ACISData[i][0], "MMM D");
-      newObj["Accumulated Degree-Days"] = this.cumulativeDegreeDays[i];
-      arr.push(newObj);
-    });
-    return arr;
+  @computed get temps() {
+    return this.ACISData.map(e => e.temp);
   }
 }

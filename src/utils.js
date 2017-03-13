@@ -95,33 +95,6 @@ export const states = [
   }
 ];
 
-export const avgTwoStringNumbers = (a, b) => {
-  const aNum = parseFloat(a);
-  const bNum = parseFloat(b);
-  return Math.round((aNum + bNum) / 2).toString();
-};
-
-export const avgTwoStringNumbersWeightedLeft = (a, b) => {
-  const aNum = parseFloat(a);
-  const bNum = parseFloat(b);
-  return Math.round((aNum + aNum + bNum) / 3).toString();
-};
-
-export const avgTwoStringNumbersWeightedRight = (a, b) => {
-  const aNum = parseFloat(a);
-  const bNum = parseFloat(b);
-  return Math.round((aNum + bNum + bNum) / 3).toString();
-};
-
-export const avgWeighted = data => {
-  const aNum = parseFloat(data[0]);
-  const dNum = parseFloat(data[data.length - 1]);
-  const bNum = Math.round((aNum + aNum + dNum) / 3);
-  const cNum = Math.round((aNum + dNum + dNum) / 3);
-  const results = [aNum, bNum, cNum, dNum];
-  return results.map(e => e.toString());
-};
-
 // Adjust Temperature parameter and Michigan network id
 export const networkTemperatureAdjustment = network => {
   // Handling different temperature parameter for each network
@@ -131,6 +104,17 @@ export const networkTemperatureAdjustment = network => {
     return "126";
   }
 };
+
+export const networkHumidityAdjustment = network =>
+  network === "miwx" ? "143" : "24";
+
+
+export const accumulationInfectionValues = data => {
+  const arr = []
+  data.reduce((prev, curr, i) => arr[i] = prev + curr, 0)
+  return arr
+}
+
 
 // Handling Michigan state network
 export const michiganIdAdjustment = station => {
@@ -145,145 +129,35 @@ export const michiganIdAdjustment = station => {
   return station.id;
 };
 
-// Flatten the array from ACIS.
-// Each element is an array with 2 elements, date(Sring) and an array with 24 values
-export const flattenArray = data => {
-  const hourlyData = data.map(day => day[1]);
-  return [].concat(...hourlyData);
-};
-
-// Un-flatten an array
-export const unflattenArray = data => {
-  const arr = [];
-  while (data.length > 0) {
-    arr.push(data.splice(0, 24));
-  }
-  return arr;
-};
-
 export const noonToNoon = data => {
   const dates = data.map(day => day[0]);
-  const hourlyData = data.map(day => day[1]);
-  const hourlyDataFlat = [].concat(...hourlyData)
 
-  const arr = [];
-  while (hourlyDataFlat.length > 24) {
-    arr.push(hourlyDataFlat.splice(12, 24));
+  const temp = data.map(day => day[1]);
+  const tempFlat = [].concat(...temp);
+
+  const hum = data.map(day => day[2]);
+  const humFlat = [].concat(...hum);
+
+  const t = [];
+  while (tempFlat.length > 24) {
+    t.push(tempFlat.splice(12, 24));
   }
 
-  let res = {}
-  arr.forEach((day,i) => {
-    res[dates[i]] = day
-  })
-  return res
-};
+  const h = [];
+  while (humFlat.length > 24) {
+    h.push(humFlat.splice(12, 24));
+  }
 
-// compute degree days
-export const calculateDegreeDay = (pest, data) => {
-  console.log(`number of days: ${flattenArray(data).length}`);
-
-  const cleanedData = data.map(day => day.filter(e => e !== "M"));
-  // const removedMissingDays = cleanedData.filter(day => day.length !== 0)
-
-  const min = cleanedData.map(day => Math.min(...day));
-  const max = cleanedData.map(day => Math.max(...day));
-  const avg = min.map((val, i) => Math.round((val + max[i]) / 2));
-  const base = pest.baseTemp;
-  const dd = avg.map(val => val - base > 0 ? val - base : 0);
-  console.log(`min: ${min}`);
-  console.log(`min: ${min.length}`);
-  console.log(`max: ${max}`);
-  console.log(`max: ${max.length}`);
-  console.log(`avg: ${avg}`);
-  console.log(`avg: ${avg.length}`);
-  console.log(`dd: ${dd}`);
-  console.log(`dd: ${dd.length}`);
-  return dd;
-};
-
-// compute degree days
-// export const calculateDegreeDay = (pest, data) => {
-//   const cleanedData = data.map(day => day.filter(e => e !== 'M'))
-//
-//   let arr = []
-//   cleanedData.map(day => {
-//     if(day.length > 0) {
-//       const min = day.map(day => Math.min(...day))
-//       const max = day.map(day => Math.max(...day))
-//       const avg = min.map((val, i) => Math.round((val + max[i]) / 2))
-//       const base = pest.baseTemp
-//       const dd = avg.map(val => val - base > 0 ? val - base : 0)
-//       // console.log(`min: ${min}`)
-//       // console.log(`max: ${max}`)
-//       // console.log(`avg: ${avg}`)
-//       // console.log(`dd: ${dd}`)
-//       arr.push(dd)
-//     }
-//   })
-//   return arr
-// }
-
-export const calculateMissingValues = data => {
-  const cleanedData = data.map(day => day.filter(e => e !== "M"));
-  const missingDays = cleanedData.filter(day => day.length === 0);
-  return missingDays.length;
-};
-
-export const calculateCumulativeDegreeDay = degreeDayData => {
-  const arr = [];
-  degreeDayData.reduce((prev, curr, i) => arr[i] = prev + curr, 0);
-  return arr;
-};
-
-export const replaceSingleMissingValues = data => {
-  return data.map((val, i) => {
-    if (i === 0 && val === "M") {
-      return data[i + 1];
-    } else if (i === data.length - 1 && val === "M") {
-      return data[i - 1];
-    } else if (val === "M" && data[i - 1] !== "M" && data[i + 1] !== "M") {
-      return avgTwoStringNumbers(data[i - 1], data[i + 1]);
-    } else {
-      return val;
-    }
+  let res = [];
+  t.forEach((t, i) => {
+    res.push({ date: dates[i], hum: h[i], temp: t });
   });
+  return res;
 };
 
-export const weightedAverage = data => {
-  if (data[2] !== "M") {
-    data[0] = data[2];
-    data[1] = data[2];
-  }
-  if (data[data.length - 3] !== "M") {
-    data[data.length - 2] = data[data.length - 3];
-    data[data.length - 1] = data[data.length - 3];
-  }
-
-  let dataConverted = data.map(e => e === "M" ? "M" : "n").join("");
-  const pattern = /nMMn/;
-  while (pattern.test(dataConverted)) {
-    const index = dataConverted.match(pattern).index;
-    let match = data.slice(index, index + 4);
-    const matchString = avgWeighted(match).join("");
-    dataConverted = dataConverted.replace(pattern, matchString);
-  }
-  return dataConverted.split("").map((e, i) => e === "n" ? data[i] : e);
-};
-
-export const replaceConsecutiveMissingValues = (
-  sisterStation,
-  currentStation
-) => {
-  const arr = [];
-  currentStation.forEach((e, i) => {
-    if (e === "M" && sisterStation[i] !== "M") {
-      arr.push(sisterStation[i]);
-    } else {
-      arr.push(e);
-    }
-  });
-  return arr;
-};
+export const DIV = (data) => {
+  return data
+}
 
 export const matchIconsToStations = (stations, state) => {
   const arr = [];
@@ -323,13 +197,3 @@ export const matchIconsToStations = (stations, state) => {
   });
   return arr;
 };
-
-// If there are stages chose the one where the current dd value is between ddlo and ddhi
-// export const calculateStageToDisplay = (getCumulativeDegreeDay, pest) => {
-//   if (getCumulativeDegreeDay.length > 0 && pest.preBiofix.length > 0) {
-//     const currentDegreeDayValue = getCumulativeDegreeDay[getCumulativeDegreeDay.length - 6]
-//     const selectedStage = pest.preBiofix.filter(stage => (currentDegreeDayValue > stage.ddlo && currentDegreeDayValue < stage.ddhi))[0]
-//     return selectedStage
-//   }
-//   return {}
-// }

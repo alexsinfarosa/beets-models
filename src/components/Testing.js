@@ -1,34 +1,31 @@
-import React from 'react';
-// import _ from 'lodash';
+import React, { Component } from "react";
+import { inject, observer } from "mobx-react";
+// import { when, toJS } from "mobx";
+import _ from "lodash";
+import { noonToNoon, accumulationInfectionValues } from "../utils";
+import { table } from "./MindlessTable";
 
-const data = [
-  ["2017-01-01", ["44", "44", "43", "43", "42", "42", "42", "42", "45", "47", "48", "48", "48", "48", "48", "47", "43", "40", "36", "34", "35", "34", "34", "33"]],
-  ["2017-01-02", ["33", "33", "33", "32", "31", "32", "32", "33", "34", "37", "38", "39", "39", "39", "38", "39", "38", "38", "39", "37", "37", "38", "38", "38"]],
-  ["2017-01-03", ["39", "39", "39", "39", "39", "40", "40", "40", "41", "42", "43", "43", "44", "44", "45", "44", "44", "44", "45", "45", "44", "43", "43", "43"]]
-  ]
+@inject("store")
+@observer
+class Testing extends Component {
+  DIV = () => {
+    const { hums } = this.props.store.app;
 
-const noonToNoon = data => {
-  const dates = data.map(day => day[0]);
-  const hourlyData = data.map(day => day[1]);
-  const hourlyDataFlat = [].concat(...hourlyData)
+    const hr = hums.map(e => e.filter(a => a > 94).length);
+    // console.log(hr);
+  };
 
-  const arr = [];
-  while (hourlyDataFlat.length > 24) {
-    arr.push(hourlyDataFlat.splice(12, 24));
+  hours = (key, t) => {
+    const avgT = table.filter(e => e[key])[0][key];
+    console.log(avgT);
+    console.log(avgT.filter(e => e[t])[0][t]);
+  };
+
+  render() {
+    console.log(this.hours(3, 59));
+    // console.log(obj);
+    return <div />;
   }
-  
-  let res = {}
-  arr.forEach((day,i) => {
-    res[dates[i]] = day
-  })
-  return res
-};
-
-const Testing = () => {
-  console.log(noonToNoon(data))
-  return (
-    <h1></h1>
-  )
 }
 
-export default Testing
+export default Testing;

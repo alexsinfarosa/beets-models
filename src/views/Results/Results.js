@@ -3,12 +3,12 @@ import { inject, observer } from "mobx-react";
 import Spinner from "react-spinkit";
 
 // Images
-// import newaPic from "./images/newa_logo.jpg";
-// import acisPic from "./images/PoweredbyACIS_NRCC.jpg";
+import newaPic from "./images/newa_logo.jpg";
+import acisPic from "./images/PoweredbyACIS_NRCC.jpg";
 
 // Components
 import ResultsHeader from "./ResultsHeader";
-// import ResultsTable from "./ResultsTable";
+import ResultsTable from "./ResultsTable";
 // import ResultsStage from './ResultsStage';
 
 // style
@@ -16,7 +16,7 @@ import ResultsHeader from "./ResultsHeader";
 
 //  styled-components
 import { Wrapper } from "../styles";
-import { Centered } from "./styles";
+import { Centered, Images, Img } from "./styles";
 
 @inject("store")
 @observer
@@ -45,24 +45,24 @@ export default class Results extends Component {
           <br />
 
           {/* DATA */}
-          {/* <ResultsTable /> */}
+          <ResultsTable />
 
           {/* DETAILS STAGE */}
           {/* <ResultsStage /> */}
 
           {/* IMAGES */}
-          {/* <Images>
-          <figure>
-            <a href="http://newa.cornell.edu/">
-              <Img src={newaPic} alt="newa" />
-            </a>
-          </figure>
-          <figure>
-            <a href="http://www.rcc-acis.org/">
-              <Img src={acisPic} alt="acis" />
-            </a>
-          </figure>
-        </Images> */}
+          <Images>
+            <figure>
+              <a href="http://newa.cornell.edu/">
+                <Img src={newaPic} alt="newa" />
+              </a>
+            </figure>
+            <figure>
+              <a href="http://www.rcc-acis.org/">
+                <Img src={acisPic} alt="acis" />
+              </a>
+            </figure>
+          </Images>
 
         </Wrapper>
       );
