@@ -15,15 +15,21 @@ class Testing extends Component {
     // console.log(hr);
   };
 
+  // hours = (key, t) => {
+  //   const x = table.filter(e => e[key])[0][key];
+  //   const y = x.map(e => e[t])
+  //   return y.filter(d => d !== undefined)[0]
+  // }
+
   hours = (key, t) => {
-    const avgT = table.filter(e => e[key])[0][key];
-    console.log(avgT);
-    console.log(avgT.filter(e => e[t])[0][t]);
-  };
+    const x = table.filter(e => e[key])[0][key];
+    const y = x.filter(e => Object.keys(e)[0] === t)[0]
+    return y[t]
+  }
 
   render() {
-    console.log(this.hours(3, 59));
-    // console.log(obj);
+    const x = this.hours('3','59')
+    console.log(x);
     return <div />;
   }
 }
