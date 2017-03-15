@@ -108,13 +108,11 @@ export const networkTemperatureAdjustment = network => {
 export const networkHumidityAdjustment = network =>
   network === "miwx" ? "143" : "24";
 
-
 export const accumulationInfectionValues = data => {
   const arr = []
   data.reduce((prev, curr, i) => arr[i] = prev + curr, 0)
   return arr
 }
-
 
 // Handling Michigan state network
 export const michiganIdAdjustment = station => {
@@ -130,34 +128,70 @@ export const michiganIdAdjustment = station => {
 };
 
 export const noonToNoon = data => {
+  // get all dates
   const dates = data.map(day => day[0]);
 
-  const temp = data.map(day => day[1]);
-  const tempFlat = [].concat(...temp);
-
+  // relative humidity
   const hum = data.map(day => day[2]);
   const humFlat = [].concat(...hum);
+  const humFlatNum = humFlat.map(e => parseInt(e,10))
 
-  const t = [];
-  while (tempFlat.length > 24) {
-    t.push(tempFlat.splice(12, 24));
+  // filter relative humidity values above the chosen percentage
+  const humFlatNumAbove90RH = humFlatNum.map(e => e > 90 ? e : 0)
+
+  // unflatten RH array
+  const humNumAbove90RH = []
+  const humFlatNumAbove90RHCopy = [...humFlatNumAbove90RH]
+  while (humFlatNumAbove90RHCopy.length > 24) {
+    humNumAbove90RH.push(humFlatNumAbove90RHCopy.splice(12,24))
   }
 
-  const h = [];
-  while (humFlat.length > 24) {
-    h.push(humFlat.splice(12, 24));
+  // determine the amount of hours with a relative humidity above the chosen percentage
+  const RHCount = humNumAbove90RH.map(day => day.filter(e => e > 0).length)
+
+  // hourly temperatures
+  const temp = data.map(day => day[1]);
+  const tempFlat = [].concat(...temp);
+  const tempFlatNum = tempFlat.map(e => parseInt(e,10))
+
+  // filter hourly temperature vlues above the chise percentage
+  const tempFlatNumAbove90RH = humFlatNumAbove90RH.map((e, i) => e === 0 ? 0 : tempFlatNum[i])
+
+  // unflatten the temperature array
+  const tempNumAbove90RH = [];
+  while (tempFlatNumAbove90RH.length > 24) {
+    tempNumAbove90RH.push(tempFlatNumAbove90RH.splice(12, 24));
+  }
+
+  // calculating average temperature 
+  const avgT = tempNumAbove90RH.map(day => {
+    const aboveVal = day.filter(e => e > 0)
+    if (aboveVal.length > 0) {
+      return Math.round(aboveVal.reduce((acc,val) => acc + val, 0) / aboveVal.length)
+    }
+    return 0
+  })
+
+  // relative humidity (HR) array
+  const hArr = [];
+  while (humFlatNum.length > 24) {
+    hArr.push(humFlatNum.splice(12, 24));
+  }
+
+  // temperature array
+  const tArr = [];
+  while (tempFlatNum.length > 24) {
+    tArr.push(tempFlatNum.splice(12, 24));
   }
 
   let res = [];
-  t.forEach((t, i) => {
-    res.push({ date: dates[i], hum: h[i], temp: t });
+  tArr.forEach((temps, i) => {
+    res.push({ date: dates[i], hum: hArr[i], temp: temps, hrsRH: RHCount[i], avgT: avgT[i] });
   });
+  console.log(res)
   return res;
 };
 
-export const DIV = (data) => {
-  return data
-}
 
 export const matchIconsToStations = (stations, state) => {
   const arr = [];

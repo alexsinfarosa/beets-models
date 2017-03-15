@@ -74,7 +74,7 @@ class App extends Component {
     this.getACISData();
     this.props.store.app.setIsSubmitted(true);
     this.props.store.app.setIsLoading(false);
-    console.log("clicked!");
+    // console.log("clicked!");
   };
 
   getACISData() {
@@ -91,7 +91,7 @@ class App extends Component {
       ]
     };
 
-    console.log(params);
+    // console.log(params);
 
     return axios
       .post("http://data.test.rcc-acis.org/StnData", params)
@@ -99,7 +99,7 @@ class App extends Component {
         if (!res.data.hasOwnProperty("error")) {
           const data = noonToNoon(res.data.data);
           this.props.store.app.setACISData(data);
-          // console.log(data.map(d => d.date));
+          // console.log(data);
           return data;
         }
         console.log(res.data.error);

@@ -67,7 +67,7 @@ export default class ResultsTable extends Component {
       const div = e.filter(d => d > 94 && d !== "M").length;
       return <td key={i}>{div}</td>;
     });
-    console.log(daily);
+    // console.log(daily);
     // const hr = hums.map((e, i) => <td key={i} {e.filter(a => a > 94).length} </td>);
 
     return (
