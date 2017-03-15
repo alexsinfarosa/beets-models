@@ -1,5 +1,6 @@
 import { observable, action, computed } from "mobx";
-import { states, matchIconsToStations } from "../utils";
+import { states, matchIconsToStations, lookUpToTable } from "../utils";
+import {table} from '../views/Results/table';
 import { format } from "date-fns";
 
 export default class AppStore {
@@ -54,12 +55,12 @@ export default class AppStore {
   @observable endDate = format(new Date(), "YYYY-MM-DD");
   @action setEndDate = d => this.endDate = format(d, "YYYY-MM-DD");
   @computed get startDate() {
-    return `${format(this.endDate, "YYYY")}-06-15`;
+    return `${format(this.endDate, "YYYY")}-04-23`;
   }
   @observable endDateR = format(new Date(), "YYYY-MM-DD");
   @action setEndDateR = d => this.endDateR = format(d, "YYYY-MM-DD");
   @computed get startDateR() {
-    return `${format(this.endDateR, "YYYY")}-06-15`;
+    return `${format(this.endDateR, "YYYY")}-04-23`;
   }
 
   // ACISData -----------------------------------------------------------------------------------
@@ -68,10 +69,33 @@ export default class AppStore {
   @computed get dates() {
     return this.ACISData.map(e => e.date);
   }
-  @computed get hums() {
-    return this.ACISData.map(e => e.hum);
+  @computed get rhs() {
+    return this.ACISData.map(e => e.rh);
   }
   @computed get temps() {
     return this.ACISData.map(e => e.temp);
+  }
+  @computed get avgTs() {
+    return this.ACISData.map(e => e.avgT);
+  }
+  @computed get hrsRHs() {
+    return this.ACISData.map(e => e.hrsRH);
+  }
+  @computed get DICV() {
+    return this.ACISData.map((day, i) => {
+      if (day.avgT > 58 && day.avgT < 95) {
+        return lookUpToTable(table, day.hrsRH.toString(), day.avgT.toString())
+      }
+        return 0
+    })
+  }
+  @computed get A2Day() {
+    const partial = this.DICV.slice(-9)
+    return partial.map((e, i) => {
+      if (i !== 0) {
+        return e + partial[i-1]
+      }
+      return 0
+    })
   }
 }

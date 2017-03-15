@@ -8,6 +8,9 @@ import { format, isBefore, subDays } from "date-fns";
 // styles
 import "./results.css";
 
+// styled-components
+import {Low, Caution, High} from './styles';
+
 @inject("store")
 @observer
 export default class ResultsTable extends Component {
@@ -24,10 +27,11 @@ export default class ResultsTable extends Component {
       dates,
       stationR,
       endDateR,
-      hums
+      DICV,
+      A2Day
     } = this.props.store.app;
 
-    const displayMonths = dates.map(date => {
+    const months = dates.map(date => {
       if (isBefore(subDays(date, 1), endDateR)) {
         return (
           <th className="months before" key={date}>{format(date, "MMM D")}</th>
@@ -63,70 +67,81 @@ export default class ResultsTable extends Component {
       );
     }
 
-    const daily = hums.map((e, i) => {
-      const div = e.filter(d => d > 94 && d !== "M").length;
-      return <td key={i}>{div}</td>;
-    });
-    // console.log(daily);
-    // const hr = hums.map((e, i) => <td key={i} {e.filter(a => a > 94).length} </td>);
+
+    const daily = DICV.map((e,i) => {
+      if (e < 6) {
+        return <Low key={i}>{e}</Low>
+      } else if (e === 6) {
+        return <Caution key={i}>{e}</Caution>
+      }
+      return <High key={i}>{e}</High>
+    })
+
+    const displayA2Day = A2Day.map((e, i) => <td key={i}>{e}</td>)
+
+    const dailyInfectionRisk = DICV.map((e, i) => {
+      if (e < 6) {
+        return <Low key={i}>Low</Low>
+      } else if (e === 6) {
+        return <Caution key={i}>Caution</Caution>
+      }
+      return <High key={i}>High</High>
+    })
+
 
     return (
-      // <div>
-      (
-        <table>
-          <thead>
-            <tr>
-              <th rowSpan="1" />
-              <th className="before">Past</th>
-              <th className="before">Past</th>
-              <th className="before">Current</th>
-              {HeaderTable}
-            </tr>
-            <tr>
-              <th>Date</th>
-              {_.takeRight(displayMonths, 8)}
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <th>Daily Infection Value</th>
-              {_.takeRight(daily, 8)}
-            </tr>
-            <tr>
-              <th>2-Day Accum Infection Values</th>
-              {/* {_.takeRight(daily, 8)} */}
-            </tr>
-            <tr>
-              <th>Daily Infection Risk</th>
-              {/* {_.takeRight(daily, 8)} */}
-            </tr>
-            <tr>
-              <th>14-Day Accum Infection Values</th>
-              {/* {_.takeRight(hr, 8)} */}
-            </tr>
-            <tr>
-              <th>21-Day Accum Infection Values</th>
-              {/* {_.takeRight(displayCumulativeDegreeDay, 8)} */}
-            </tr>
-            <tr>
-              <th>Season Total Infection Values</th>
-              {/* {_.takeRight(displayCumulativeDegreeDay, 8)} */}
-            </tr>
-            <tr>
-              <td colSpan="9" className="has-text-centered graph">
-                <a className="graph-link" onClick={this.handleGraphClick}>
-                  {this.isGraphDisplayed ? "Hide" : "Show"}
-                  {" "}
-                  Accumulated Degree-Days Graph
-                </a>
+      <table>
+        <thead>
+          <tr>
+            <th rowSpan="1" />
+            <th className="before">Past</th>
+            <th className="before">Past</th>
+            <th className="before">Current</th>
+            {HeaderTable}
+          </tr>
+          <tr>
+            <th></th>
+            {_.takeRight(months, 8)}
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <th><small>Daily <br/>Infection Values</small></th>
+            {_.takeRight(daily, 8)}
+          </tr>
+          <tr>
+            <th><small>Daily <br/> Infection Level</small></th>
+            {_.takeRight(dailyInfectionRisk, 8)}
+          </tr>
+          <tr>
+          <th><small>2-Day <br/> Total Infection Values</small></th>
+            {_.takeRight(displayA2Day, 8)}
+          </tr>
+          <tr>
+            <th><small>14-Day <br/>Accum. Infection Values</small></th>
+            {/* {_.takeRight(hr, 8)} */}
+          </tr>
+          <tr>
+            <th><small>21-Day <br/> Accum. Infection Values</small></th>
+            {/* {_.takeRight(displayCumulativeDegreeDay, 8)} */}
+          </tr>
+          <tr>
+            <th><small>Season <br/> Total Infection Values</small></th>
+            {/* {_.takeRight(displayCumulativeDegreeDay, 8)} */}
+          </tr>
+          <tr>
+            <td colSpan="9" className="has-text-centered graph">
+              <a className="graph-link" onClick={this.handleGraphClick}>
+                {this.isGraphDisplayed ? "Hide" : "Show"}
+                {" "}
+                Accumulated Degree-Days Graph
+              </a>
 
-                {this.isGraphDisplayed && <ResultsGraph />}
-              </td>
-            </tr>
-          </tbody>
-        </table>
-      )
-      // </div>
+              {this.isGraphDisplayed && <ResultsGraph />}
+            </td>
+          </tr>
+        </tbody>
+      </table>
     );
   }
 }

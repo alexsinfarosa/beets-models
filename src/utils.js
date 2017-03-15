@@ -137,17 +137,17 @@ export const noonToNoon = data => {
   const humFlatNum = humFlat.map(e => parseInt(e,10))
 
   // filter relative humidity values above the chosen percentage
-  const humFlatNumAbove90RH = humFlatNum.map(e => e > 90 ? e : 0)
+  const humFlatNumAbove95RH = humFlatNum.map(e => e > 30 ? e : 0)
 
   // unflatten RH array
-  const humNumAbove90RH = []
-  const humFlatNumAbove90RHCopy = [...humFlatNumAbove90RH]
-  while (humFlatNumAbove90RHCopy.length > 24) {
-    humNumAbove90RH.push(humFlatNumAbove90RHCopy.splice(12,24))
+  const humNumAbove95RH = []
+  const humFlatNumAbove95RHCopy = [...humFlatNumAbove95RH]
+  while (humFlatNumAbove95RHCopy.length > 24) {
+    humNumAbove95RH.push(humFlatNumAbove95RHCopy.splice(12,24))
   }
 
   // determine the amount of hours with a relative humidity above the chosen percentage
-  const RHCount = humNumAbove90RH.map(day => day.filter(e => e > 0).length)
+  const RHCount = humNumAbove95RH.map(day => day.filter(e => e > 0).length)
 
   // hourly temperatures
   const temp = data.map(day => day[1]);
@@ -155,16 +155,16 @@ export const noonToNoon = data => {
   const tempFlatNum = tempFlat.map(e => parseInt(e,10))
 
   // filter hourly temperature vlues above the chise percentage
-  const tempFlatNumAbove90RH = humFlatNumAbove90RH.map((e, i) => e === 0 ? 0 : tempFlatNum[i])
+  const tempFlatNumAbove95RH = humFlatNumAbove95RH.map((e, i) => e === 0 ? 0 : tempFlatNum[i])
 
   // unflatten the temperature array
-  const tempNumAbove90RH = [];
-  while (tempFlatNumAbove90RH.length > 24) {
-    tempNumAbove90RH.push(tempFlatNumAbove90RH.splice(12, 24));
+  const tempNumAbove95RH = [];
+  while (tempFlatNumAbove95RH.length > 24) {
+    tempNumAbove95RH.push(tempFlatNumAbove95RH.splice(12, 24));
   }
 
-  // calculating average temperature 
-  const avgT = tempNumAbove90RH.map(day => {
+  // calculating average temperature
+  const avgT = tempNumAbove95RH.map(day => {
     const aboveVal = day.filter(e => e > 0)
     if (aboveVal.length > 0) {
       return Math.round(aboveVal.reduce((acc,val) => acc + val, 0) / aboveVal.length)
@@ -186,12 +186,17 @@ export const noonToNoon = data => {
 
   let res = [];
   tArr.forEach((temps, i) => {
-    res.push({ date: dates[i], hum: hArr[i], temp: temps, hrsRH: RHCount[i], avgT: avgT[i] });
+    res.push({ date: dates[i], rh: hArr[i], temp: temps, hrsRH: RHCount[i], avgT: avgT[i] });
   });
-  console.log(res)
   return res;
 };
 
+// determine Daily Infection Condition Values (DICV) from the table
+export const lookUpToTable = (table, hrsRH, avgT) => {
+  const temps = table.filter(e => e[hrsRH])[0][hrsRH];
+  const hums = temps.filter(e => Object.keys(e)[0] === avgT)[0]
+  return hums[avgT]
+}
 
 export const matchIconsToStations = (stations, state) => {
   const arr = [];

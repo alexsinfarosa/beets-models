@@ -91,7 +91,7 @@ class App extends Component {
       ]
     };
 
-    // console.log(params);
+    console.log(params);
 
     return axios
       .post("http://data.test.rcc-acis.org/StnData", params)
