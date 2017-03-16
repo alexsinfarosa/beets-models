@@ -63,8 +63,12 @@ export default class AppStore {
   @action setStationR = d => this.stationR = d;
 
   // Dates---------------------------------------------------------------------------------------
-  @observable endDate = format(new Date(), "YYYY-MM-DD");
-  @action setEndDate = d => this.endDate = format(d, "YYYY-MM-DD");
+  @observable endDate = JSON.parse(localStorage.getItem("endDate")) ||
+    format(new Date(), "YYYY-MM-DD");
+  @action setEndDate = d => {
+    this.endDate = format(d, "YYYY-MM-DD");
+    localStorage.setItem("endDate", JSON.stringify(this.endDate));
+  };
   @computed get startDate() {
     return `${format(this.endDate, "YYYY")}-04-23`;
   }

@@ -1,18 +1,21 @@
 import React, { Component } from "react";
 import { inject, observer } from "mobx-react";
 import { when } from "mobx";
+// import { toJS } from "mobx";
 // import DevTools from "mobx-react-devtools";
 import { BrowserRouter as Router, Route, Redirect } from "react-router-dom";
 import axios from "axios";
-import { format, addDays } from "date-fns";
+// import { format, addDays } from "date-fns";
 import _ from "lodash";
+
+// Fetch ACIS Data
+import { fetchACISData } from "./FetchData";
 
 // utility functions
 import {
   noonToNoon,
-  networkHumidityAdjustment,
-  networkTemperatureAdjustment,
-  michiganIdAdjustment
+  replaceSingleMissingValues,
+  containsMissingValues
 } from "./utils";
 
 // styled-components
@@ -65,63 +68,44 @@ class App extends Component {
   };
 
   calculate = () => {
-    const { disease, state, station, endDate } = this.props.store.app;
+    const {
+      disease,
+      state,
+      station,
+      endDate,
+      startDate
+    } = this.props.store.app;
     this.props.store.app.setDiseaseR(disease);
     this.props.store.app.setStateR(state);
     this.props.store.app.setStationR(station);
     this.props.store.app.setEndDateR(endDate);
 
-    this.getACISData();
+    this.getAllData(station, startDate, endDate);
     this.props.store.app.setIsSubmitted(true);
     this.props.store.app.setIsLoading(false);
-    // console.log("clicked!");
   };
 
-  getACISData() {
-    const { station, startDate, endDate } = this.props.store.app;
-
-    const params = {
-      sid: `${michiganIdAdjustment(station)} ${station.network}`,
-      sdate: startDate,
-      // Plus 6 days because we account for the noonToNoon function
-      edate: format(addDays(endDate, 6), "YYYY-MM-DD"),
-      elems: [
-        networkTemperatureAdjustment(station.network),
-        networkHumidityAdjustment(station.network)
-      ]
-    };
-
-    console.log(params);
-
-    return axios
-      .post("http://data.test.rcc-acis.org/StnData", params)
-      .then(res => {
-        if (!res.data.hasOwnProperty("error")) {
-          const data = noonToNoon(station, res.data.data);
-          this.props.store.app.setACISData(data);
-          return data;
-        }
-        console.log(res.data.error);
-      })
-      .catch(err => {
-        console.log(err);
-      });
+  async getAllData(station, startDate, endDate) {
+    try {
+      let acis = await fetchACISData(station, startDate, endDate);
+      console.log(acis.map(arr => arr[1].filter(e => e === "M").length));
+      acis.slice(0, 5).map(e => console.log(e[1]));
+      if (!containsMissingValues(acis)) {
+        console.log("inside");
+        return this.props.store.app.setACISData(noonToNoon(station, acis));
+      }
+      acis = replaceSingleMissingValues(acis[1]);
+      acis.slice(0, 5).map(e => console.log(e[1]));
+      if (!containsMissingValues(acis)) {
+        // get sister station id and network
+      }
+      console.log("still dirty");
+    } catch (e) {
+      console.error(e);
+    }
   }
 
   render() {
-    // const {
-    //   diseaseR,
-    //   stationR,
-    //   startDateR,
-    //   endDateR
-    // } = this.props.store.app;
-
-    // console.log(diseaseR);
-    // console.log(toJS(diseaseR));
-    // console.log(toJS(stationR));
-    // console.log(startDateR);
-    // console.log(endDateR);
-
     const { state, isSubmitted } = this.props.store.app;
     return (
       <Router>

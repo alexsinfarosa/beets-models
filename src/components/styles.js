@@ -33,7 +33,7 @@ export const CalculateBtn = styled.button`
   }
 `;
 
-export const OptionDefault = styled.option`
-  color: red;
-  opacity: 0.7;
+export const Option = styled.option`
+  color: red !important;
+  background-color: yellow !important;
 `;

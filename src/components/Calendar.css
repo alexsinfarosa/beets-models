@@ -2,7 +2,10 @@
   cursor: not-allowed;
   pointer-events: none;
   opacity: .5;
+}
 
+.defaultOption {
+  color: red;
 }
 
 input.input-calender {

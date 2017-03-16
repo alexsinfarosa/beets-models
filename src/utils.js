@@ -95,6 +95,34 @@ export const states = [
   }
 ];
 
+export const avgTwoStringNumbers = (a, b) => {
+  const aNum = parseFloat(a);
+  const bNum = parseFloat(b);
+  return Math.round((aNum + bNum) / 2).toString();
+};
+
+export const replaceSingleMissingValues = data => {
+  return data.map((val, i) => {
+    if (i === 0 && val === "M") {
+      return data[i + 1];
+    } else if (i === data.length - 1 && val === "M") {
+      return data[i - 1];
+    } else if (val === "M" && data[i - 1] !== "M" && data[i + 1] !== "M") {
+      return avgTwoStringNumbers(data[i - 1], data[i + 1]);
+    } else {
+      return val;
+    }
+  });
+};
+
+export const containsMissingValues = data => {
+  const numOfMissingValues = data.map(day => day[1].find(e => e === "M"));
+  if (numOfMissingValues === "M") {
+    return true;
+  }
+  return false;
+};
+
 // Adjust Temperature parameter and Michigan network id
 export const networkTemperatureAdjustment = network => {
   // Handling different temperature parameter for each network
@@ -135,11 +163,11 @@ export const noonToNoon = (station, data) => {
   const hum = data.map(day => day[2]);
   const humFlat = [].concat(...hum);
   let humFlatNum = humFlat.map(e => parseInt(e, 10));
-  console.log(humFlatNum);
+  // console.log(`${humFlatNum}`);
   if (station.network === "icao") {
     humFlatNum = humFlatNum.map(e => Math.round(e / (0.0047 * e + 0.53)));
   }
-  console.log(humFlatNum);
+  // console.log(`${humFlatNum}`);
   // filter relative humidity values above the chosen percentage
   const humFlatNumAbove95RH = humFlatNum.map(e => e > 90 ? e : 0);
 

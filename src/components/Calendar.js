@@ -13,6 +13,7 @@ import { Selector } from "./styles";
 @observer
 class Calendar extends Component {
   render() {
+    const { endDate } = this.props.store.app;
     return (
       <Selector>
         <label>Accumulation End Date:</label>
@@ -23,7 +24,7 @@ class Calendar extends Component {
             altFormat: "F j, Y",
             inline: false, // show the calendar inline
             altInputClass: "input-calender",
-            defaultDate: "2016-07-07",
+            defaultDate: endDate ? endDate : new Date(),
             minDate: `${getYear(subYears(new Date(), 1))}/04/23`
           }}
           onChange={d => this.props.store.app.setEndDate(d)}
