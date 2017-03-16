@@ -9,7 +9,7 @@ import { format, isBefore, subDays } from "date-fns";
 import "./results.css";
 
 // styled-components
-import {Low, Caution, High} from './styles';
+import { Low, Caution, High } from "./styles";
 
 @inject("store")
 @observer
@@ -28,7 +28,10 @@ export default class ResultsTable extends Component {
       stationR,
       endDateR,
       DICV,
-      A2Day
+      A2Day,
+      A14Day,
+      A21Day,
+      season
     } = this.props.store.app;
 
     const months = dates.map(date => {
@@ -67,67 +70,69 @@ export default class ResultsTable extends Component {
       );
     }
 
-
-    const daily = DICV.map((e,i) => {
+    const daily = DICV.map((e, i) => {
       if (e < 6) {
-        return <Low key={i}>{e}</Low>
+        return <Low key={i}>{e}</Low>;
       } else if (e === 6) {
-        return <Caution key={i}>{e}</Caution>
+        return <Caution key={i}>{e}</Caution>;
       }
-      return <High key={i}>{e}</High>
-    })
+      return <High key={i}>{e}</High>;
+    });
 
-    const displayA2Day = A2Day.map((e, i) => <td key={i}>{e}</td>)
+    const displayA2Day = A2Day.map((e, i) => <td key={i}>{e}</td>);
 
     const dailyInfectionRisk = DICV.map((e, i) => {
       if (e < 6) {
-        return <Low key={i}>Low</Low>
+        return <Low key={i}>Low</Low>;
       } else if (e === 6) {
-        return <Caution key={i}>Caution</Caution>
+        return <Caution key={i}>Caution</Caution>;
       }
-      return <High key={i}>High</High>
-    })
+      return <High key={i}>High</High>;
+    });
 
+    const displayA14Day = A14Day.map((e, i) => <td key={i}>{e}</td>);
+    const displayA21Day = A21Day.map((e, i) => <td key={i}>{e}</td>);
+    const displaySeason = season.map((e, i) => <td key={i}>{e}</td>);
 
     return (
       <table>
         <thead>
           <tr>
-            <th rowSpan="1" />
+            <th rowSpan="2" />
             <th className="before">Past</th>
             <th className="before">Past</th>
             <th className="before">Current</th>
             {HeaderTable}
           </tr>
           <tr>
-            <th></th>
+            {/* <th /> */}
             {_.takeRight(months, 8)}
           </tr>
         </thead>
         <tbody>
           <tr>
-            <th><small>Daily <br/>Infection Values</small></th>
+            <th><small>Daily <br />Infection Values</small></th>
             {_.takeRight(daily, 8)}
           </tr>
           <tr>
-            <th><small>Daily <br/> Infection Level</small></th>
+            <th><small>Daily <br /> Infection Level</small></th>
             {_.takeRight(dailyInfectionRisk, 8)}
           </tr>
           <tr>
-          <th><small>2-Day <br/> Total Infection Values</small></th>
+            <th><small>2-Day <br /> Total Infection Values</small></th>
             {_.takeRight(displayA2Day, 8)}
           </tr>
           <tr>
-            <th><small>14-Day <br/>Accum. Infection Values</small></th>
-            {/* {_.takeRight(hr, 8)} */}
+            <th><small>14-Day <br />Accum. Infection Values</small></th>
+            {_.takeRight(displayA14Day, 8)}
           </tr>
           <tr>
-            <th><small>21-Day <br/> Accum. Infection Values</small></th>
-            {/* {_.takeRight(displayCumulativeDegreeDay, 8)} */}
+            <th><small>21-Day <br /> Accum. Infection Values</small></th>
+            {_.takeRight(displayA21Day, 8)}
           </tr>
           <tr>
-            <th><small>Season <br/> Total Infection Values</small></th>
-            {/* {_.takeRight(displayCumulativeDegreeDay, 8)} */}
+            <th><small>Season <br /> Total Infection Values</small></th>
+            {_.takeRight(displaySeason, 8)}
           </tr>
           <tr>
             <td colSpan="9" className="has-text-centered graph">

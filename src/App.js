@@ -97,9 +97,8 @@ class App extends Component {
       .post("http://data.test.rcc-acis.org/StnData", params)
       .then(res => {
         if (!res.data.hasOwnProperty("error")) {
-          const data = noonToNoon(res.data.data);
+          const data = noonToNoon(station, res.data.data);
           this.props.store.app.setACISData(data);
-          // console.log(data);
           return data;
         }
         console.log(res.data.error);

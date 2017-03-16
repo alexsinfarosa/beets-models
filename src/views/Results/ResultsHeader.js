@@ -19,10 +19,16 @@ export default class ResultsHeader extends Component {
     return (
       <div>
         <CenterText>
-          <h4>{diseaseR} Predictions for {stationR.name}</h4>
+          <h4 style={{ letterSpacing: "1px" }}>
+            {diseaseR}
+            {" "}
+            Predictions for
+            {" "}
+            {stationR.name}
+          </h4>
         </CenterText>
         <CenterText>
-          <h5>
+          <h5 style={{ letterSpacing: "1px" }}>
             {format(startDateR, "MM/DD/YYYY")}
             {" "}
             through

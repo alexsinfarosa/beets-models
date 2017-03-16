@@ -109,10 +109,10 @@ export const networkHumidityAdjustment = network =>
   network === "miwx" ? "143" : "24";
 
 export const accumulationInfectionValues = data => {
-  const arr = []
-  data.reduce((prev, curr, i) => arr[i] = prev + curr, 0)
-  return arr
-}
+  const arr = [];
+  data.reduce((prev, curr, i) => arr[i] = prev + curr, 0);
+  return arr;
+};
 
 // Handling Michigan state network
 export const michiganIdAdjustment = station => {
@@ -127,35 +127,41 @@ export const michiganIdAdjustment = station => {
   return station.id;
 };
 
-export const noonToNoon = data => {
+export const noonToNoon = (station, data) => {
   // get all dates
   const dates = data.map(day => day[0]);
 
   // relative humidity
   const hum = data.map(day => day[2]);
   const humFlat = [].concat(...hum);
-  const humFlatNum = humFlat.map(e => parseInt(e,10))
-
+  let humFlatNum = humFlat.map(e => parseInt(e, 10));
+  console.log(humFlatNum);
+  if (station.network === "icao") {
+    humFlatNum = humFlatNum.map(e => Math.round(e / (0.0047 * e + 0.53)));
+  }
+  console.log(humFlatNum);
   // filter relative humidity values above the chosen percentage
-  const humFlatNumAbove95RH = humFlatNum.map(e => e > 30 ? e : 0)
+  const humFlatNumAbove95RH = humFlatNum.map(e => e > 90 ? e : 0);
 
   // unflatten RH array
-  const humNumAbove95RH = []
-  const humFlatNumAbove95RHCopy = [...humFlatNumAbove95RH]
+  const humNumAbove95RH = [];
+  const humFlatNumAbove95RHCopy = [...humFlatNumAbove95RH];
   while (humFlatNumAbove95RHCopy.length > 24) {
-    humNumAbove95RH.push(humFlatNumAbove95RHCopy.splice(12,24))
+    humNumAbove95RH.push(humFlatNumAbove95RHCopy.splice(12, 24));
   }
 
   // determine the amount of hours with a relative humidity above the chosen percentage
-  const RHCount = humNumAbove95RH.map(day => day.filter(e => e > 0).length)
+  const RHCount = humNumAbove95RH.map(day => day.filter(e => e > 0).length);
 
   // hourly temperatures
   const temp = data.map(day => day[1]);
   const tempFlat = [].concat(...temp);
-  const tempFlatNum = tempFlat.map(e => parseInt(e,10))
+  const tempFlatNum = tempFlat.map(e => parseInt(e, 10));
 
   // filter hourly temperature vlues above the chise percentage
-  const tempFlatNumAbove95RH = humFlatNumAbove95RH.map((e, i) => e === 0 ? 0 : tempFlatNum[i])
+  const tempFlatNumAbove95RH = humFlatNumAbove95RH.map(
+    (e, i) => e === 0 ? 0 : tempFlatNum[i]
+  );
 
   // unflatten the temperature array
   const tempNumAbove95RH = [];
@@ -165,12 +171,14 @@ export const noonToNoon = data => {
 
   // calculating average temperature
   const avgT = tempNumAbove95RH.map(day => {
-    const aboveVal = day.filter(e => e > 0)
+    const aboveVal = day.filter(e => e > 0);
     if (aboveVal.length > 0) {
-      return Math.round(aboveVal.reduce((acc,val) => acc + val, 0) / aboveVal.length)
+      return Math.round(
+        aboveVal.reduce((acc, val) => acc + val, 0) / aboveVal.length
+      );
     }
-    return 0
-  })
+    return 0;
+  });
 
   // relative humidity (HR) array
   const hArr = [];
@@ -186,7 +194,13 @@ export const noonToNoon = data => {
 
   let res = [];
   tArr.forEach((temps, i) => {
-    res.push({ date: dates[i], rh: hArr[i], temp: temps, hrsRH: RHCount[i], avgT: avgT[i] });
+    res.push({
+      date: dates[i],
+      rh: hArr[i],
+      temp: temps,
+      hrsRH: RHCount[i],
+      avgT: avgT[i]
+    });
   });
   return res;
 };
@@ -194,9 +208,15 @@ export const noonToNoon = data => {
 // determine Daily Infection Condition Values (DICV) from the table
 export const lookUpToTable = (table, hrsRH, avgT) => {
   const temps = table.filter(e => e[hrsRH])[0][hrsRH];
-  const hums = temps.filter(e => Object.keys(e)[0] === avgT)[0]
-  return hums[avgT]
-}
+  const hums = temps.filter(e => Object.keys(e)[0] === avgT)[0];
+  return hums[avgT];
+};
+
+export const cumulativeDICV = dicv => {
+  const arr = [];
+  dicv.reduce((prev, curr, i) => arr[i] = prev + curr, 0);
+  return arr;
+};
 
 export const matchIconsToStations = (stations, state) => {
   const arr = [];

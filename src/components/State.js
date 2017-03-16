@@ -1,6 +1,5 @@
 import React, { Component } from "react";
 import { inject, observer } from "mobx-react";
-import { observable, action } from "mobx";
 
 // Utilities
 import { states } from "../utils";
@@ -11,18 +10,10 @@ import { Select, Selector } from "./styles";
 @inject("store")
 @observer
 class State extends Component {
-  constructor(props) {
-    super(props);
-    if (this.props.store.app.state.name) {
-      this.setIsDisabled(true);
-    }
-  }
-  @observable isDisabled = false;
-  @action setIsDisabled = d => this.isDisabled = d;
-
   handleChange = e => {
-    this.setIsDisabled(true);
+    this.props.store.app.setSelectState(true);
     this.props.store.app.setState(e.target.value);
+    this.props.store.app.setSelectStation(false);
   };
 
   render() {
@@ -38,7 +29,9 @@ class State extends Component {
           value={this.props.store.app.state.name}
           onChange={this.handleChange}
         >
-          {this.isDisabled ? null : <option>Select State</option>}
+          {this.props.store.app.selectState
+            ? null
+            : <option>Select State</option>}
           {stateList}
         </Select>
       </Selector>

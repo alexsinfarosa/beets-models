@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import { inject, observer } from "mobx-react";
-import { observable, action } from "mobx";
+// import { toJS } from "mobx";
 
 // styled-components
 import { Select, Selector } from "./styles";
@@ -8,23 +8,18 @@ import { Select, Selector } from "./styles";
 @inject("store")
 @observer
 class Station extends Component {
-  constructor(props) {
-    super(props);
-    if (this.props.store.app.station.name) {
-      this.setIsDisabled(true);
-    }
-  }
-  @observable isDisabled = false;
-  @action setIsDisabled = d => this.isDisabled = d;
-
   handleChange = e => {
-    this.setIsDisabled(true);
+    this.props.store.app.setSelectStation(true);
     this.props.store.app.setStation(e.target.value);
   };
 
   render() {
-    // console.log(toJS(this.props.store.app.station.name));
-    const { getCurrentStateStations, station } = this.props.store.app;
+    // console.log(toJS(this.props.store.app.station));
+    const {
+      getCurrentStateStations,
+      station,
+      selectStation
+    } = this.props.store.app;
 
     const stationList = getCurrentStateStations.map(station => (
       <option key={`${station.id} ${station.network}`}>{station.name}</option>
@@ -44,7 +39,7 @@ class Station extends Component {
           value={station.name}
           onChange={this.handleChange}
         >
-          {this.isDisabled ? null : <option>Select Station</option>}
+          {selectStation ? null : <option>Select Station</option>}
           {stationList}
         </Select>
       </Selector>

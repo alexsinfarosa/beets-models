@@ -21,6 +21,11 @@ import { Centered, Images, Img } from "./styles";
 @inject("store")
 @observer
 export default class Results extends Component {
+  componentWillMount() {
+    this.props.store.app.setIsSubmitted(true);
+    this.props.store.app.setIsLoading(false);
+  }
+
   render() {
     const { isLoading } = this.props.store.app;
     if (isLoading) {
