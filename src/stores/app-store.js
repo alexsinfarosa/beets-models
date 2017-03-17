@@ -70,12 +70,12 @@ export default class AppStore {
     localStorage.setItem("endDate", JSON.stringify(this.endDate));
   };
   @computed get startDate() {
-    return `${format(this.endDate, "YYYY")}-04-23`;
+    return `${format(this.endDate, "YYYY")}-01-01`;
   }
   @observable endDateR = format(new Date(), "YYYY-MM-DD");
   @action setEndDateR = d => this.endDateR = format(d, "YYYY-MM-DD");
   @computed get startDateR() {
-    return `${format(this.endDateR, "YYYY")}-04-23`;
+    return `${format(this.endDateR, "YYYY")}-01-01`;
   }
 
   // ACISData -----------------------------------------------------------------------------------

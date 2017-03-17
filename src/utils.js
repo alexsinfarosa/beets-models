@@ -95,35 +95,67 @@ export const states = [
   }
 ];
 
+// Returns the average of two numbers.
+// Inputs are of type String
 export const avgTwoStringNumbers = (a, b) => {
   const aNum = parseFloat(a);
   const bNum = parseFloat(b);
   return Math.round((aNum + bNum) / 2).toString();
 };
 
-export const replaceSingleMissingValues = data => {
-  return data.map((val, i) => {
-    if (i === 0 && val === "M") {
-      return data[i + 1];
-    } else if (i === data.length - 1 && val === "M") {
-      return data[i - 1];
-    } else if (val === "M" && data[i - 1] !== "M" && data[i + 1] !== "M") {
-      return avgTwoStringNumbers(data[i - 1], data[i + 1]);
-    } else {
-      return val;
-    }
+// It replaces non consecutive values in data with the average
+// of the left and the right values
+export const replaceNonConsecutiveMissingValues = data => {
+  return data.map(day => {
+    return day.map(param => {
+      if (Array.isArray(param)) {
+        return param.map((val, i) => {
+          if (i === 0 && val === "M") {
+            return param[i + 1];
+          } else if (i === param.length - 1 && val === "M") {
+            return param[i - 1];
+          } else if (
+            val === "M" && param[i - 1] !== "M" && param[i + 1] !== "M"
+          ) {
+            return avgTwoStringNumbers(param[i - 1], param[i + 1]);
+          } else {
+            return val;
+          }
+        });
+      }
+      return param;
+    });
   });
 };
 
+// Returns acis with replaced consecutive values from sister station
+export const replaceConsecutiveMissingValues = (sister, acis) => {
+  return acis.map((day, d) => {
+    return day.map((param, p) => {
+      if (Array.isArray(param)) {
+        return param.map((e, i) => {
+          if (e === "M") {
+            return sister[d][p][i];
+          } else {
+            return e;
+          }
+        });
+      }
+      return param;
+    });
+  });
+};
+
+// Returns true if the temperature array in data has at least one M value
 export const containsMissingValues = data => {
   const numOfMissingValues = data.map(day => day[1].find(e => e === "M"));
-  if (numOfMissingValues === "M") {
+  if (numOfMissingValues.find(e => e === "M") === "M") {
     return true;
   }
   return false;
 };
 
-// Adjust Temperature parameter and Michigan network id
+// Handling Temperature parameter and Michigan network id adjustment
 export const networkTemperatureAdjustment = network => {
   // Handling different temperature parameter for each network
   if (network === "newa" || network === "icao" || network === "njwx") {
@@ -133,16 +165,18 @@ export const networkTemperatureAdjustment = network => {
   }
 };
 
+// Handling Relative Humidity Adjustment
 export const networkHumidityAdjustment = network =>
   network === "miwx" ? "143" : "24";
 
+// Returns and array of Accumulation Infection Values
 export const accumulationInfectionValues = data => {
   const arr = [];
   data.reduce((prev, curr, i) => arr[i] = prev + curr, 0);
   return arr;
 };
 
-// Handling Michigan state network
+// Handling Michigan state network adjustment
 export const michiganIdAdjustment = station => {
   if (
     station.state === "MI" &&
@@ -155,6 +189,10 @@ export const michiganIdAdjustment = station => {
   return station.id;
 };
 
+// This function will shift data from (1, 24) to (12, 24)
+// Returns and array of objects where eache object has the following
+// properties:
+// {date: '2016-01-01', hr: ['34','44'...], temp: ['67','45'...], hrsRH: 3, avgT: 67}
 export const noonToNoon = (station, data) => {
   // get all dates
   const dates = data.map(day => day[0]);
@@ -233,19 +271,22 @@ export const noonToNoon = (station, data) => {
   return res;
 };
 
-// determine Daily Infection Condition Values (DICV) from the table
+// Determine Daily Infection Condition Values (DICV) from the table
 export const lookUpToTable = (table, hrsRH, avgT) => {
   const temps = table.filter(e => e[hrsRH])[0][hrsRH];
   const hums = temps.filter(e => Object.keys(e)[0] === avgT)[0];
   return hums[avgT];
 };
 
+// Returns an array with cumulative Daily Infection Critical Values
 export const cumulativeDICV = dicv => {
   const arr = [];
   dicv.reduce((prev, curr, i) => arr[i] = prev + curr, 0);
   return arr;
 };
 
+// Returns an array of objects. Each object is a station with the following
+// properties: TO DO...
 export const matchIconsToStations = (stations, state) => {
   const arr = [];
   const newa = "http://newa.nrcc.cornell.edu/gifs/newa_small.png";

@@ -9,13 +9,19 @@ import axios from "axios";
 import _ from "lodash";
 
 // Fetch ACIS Data
-import { fetchACISData } from "./FetchData";
+import {
+  fetchACISData,
+  getSisterStationIdAndNetwork,
+  fetchSisterStationData,
+  fetchForecastData
+} from "./FetchData";
 
 // utility functions
 import {
   noonToNoon,
-  replaceSingleMissingValues,
-  containsMissingValues
+  replaceNonConsecutiveMissingValues,
+  containsMissingValues,
+  replaceConsecutiveMissingValues
 } from "./utils";
 
 // styled-components
@@ -80,26 +86,67 @@ class App extends Component {
     this.props.store.app.setStationR(station);
     this.props.store.app.setEndDateR(endDate);
 
-    this.getAllData(station, startDate, endDate);
+    this.getData(station, startDate, endDate);
     this.props.store.app.setIsSubmitted(true);
     this.props.store.app.setIsLoading(false);
   };
 
-  async getAllData(station, startDate, endDate) {
+  async getData(station, startDate, endDate) {
     try {
+      // Fetch ACIS data
       let acis = await fetchACISData(station, startDate, endDate);
-      console.log(acis.map(arr => arr[1].filter(e => e === "M").length));
-      acis.slice(0, 5).map(e => console.log(e[1]));
+      acis.map(day => console.log(day[1]));
+      console.log("----------------------------------");
+
+      // Check if there are missing values
       if (!containsMissingValues(acis)) {
-        console.log("inside");
         return this.props.store.app.setACISData(noonToNoon(station, acis));
       }
-      acis = replaceSingleMissingValues(acis[1]);
-      acis.slice(0, 5).map(e => console.log(e[1]));
+
+      // Replacing non consecutive missing values
+      acis = replaceNonConsecutiveMissingValues(acis);
+      acis.map(day => console.log(day[1]));
+      console.log("----------------------------------");
+
+      // Check if there are missing values
       if (!containsMissingValues(acis)) {
-        // get sister station id and network
+        return this.props.store.app.setACISData(noonToNoon(station, acis));
       }
-      console.log("still dirty");
+
+      // Get sister station id and network
+      const idAndNetwork = await getSisterStationIdAndNetwork(station);
+
+      // Fetch sister station data
+      const sisterStationData = await fetchSisterStationData(
+        idAndNetwork,
+        startDate,
+        endDate
+      );
+
+      // Replace acis with sister station data
+      acis = replaceConsecutiveMissingValues(sisterStationData, acis);
+      acis.map(day => console.log(day[1]));
+      console.log("----------------------------------");
+
+      // Check if there are missing values
+      if (!containsMissingValues(acis)) {
+        return this.props.store.app.setACISData(noonToNoon(station, acis));
+      }
+
+      // Fetch forecast data
+      const forecastData = await fetchForecastData(station, startDate, endDate);
+      forecastData.map(day => console.log(day[1]));
+      console.log(forecastData);
+      console.log("----------------------------------");
+
+      // Replace acis with forecast data
+      acis = replaceConsecutiveMissingValues(forecastData, acis);
+      acis.map(day => console.log(day[1]));
+
+      // Check if there are missing values
+      // if (!containsMissingValues(acis)) {
+      //   return this.props.store.app.setACISData(noonToNoon(station, acis));
+      // }
     } catch (e) {
       console.error(e);
     }

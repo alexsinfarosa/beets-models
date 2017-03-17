@@ -25,7 +25,7 @@ class Calendar extends Component {
             inline: false, // show the calendar inline
             altInputClass: "input-calender",
             defaultDate: endDate ? endDate : new Date(),
-            minDate: `${getYear(subYears(new Date(), 1))}/04/23`
+            minDate: `${getYear(subYears(new Date(), 1))}/01/01`
           }}
           onChange={d => this.props.store.app.setEndDate(d)}
         />
