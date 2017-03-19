@@ -128,7 +128,7 @@ export const replaceNonConsecutiveMissingValues = data => {
   });
 };
 
-// Returns acis with replaced consecutive values from sister station
+// Returns acis with replaced consecutive values
 export const replaceConsecutiveMissingValues = (sister, acis) => {
   return acis.map((day, d) => {
     return day.map((param, p) => {
@@ -203,11 +203,18 @@ export const noonToNoon = (station, data) => {
   let humFlatNum = humFlat.map(e => parseInt(e, 10));
   // console.log(`${humFlatNum}`);
   if (station.network === "icao") {
-    humFlatNum = humFlatNum.map(e => Math.round(e / (0.0047 * e + 0.53)));
+    humFlatNum = humFlatNum.map(e => {
+      if (e === "M") {
+        return "M";
+      } else {
+        return Math.round(e / (0.0047 * e + 0.53));
+      }
+    });
   }
   // console.log(`${humFlatNum}`);
   // filter relative humidity values above the chosen percentage
-  const humFlatNumAbove95RH = humFlatNum.map(e => e > 90 ? e : 0);
+  // If there are NaN values it replaces with 0
+  const humFlatNumAbove95RH = humFlatNum.map(e => e > 20 ? e : 0);
 
   // unflatten RH array
   const humNumAbove95RH = [];
@@ -224,7 +231,7 @@ export const noonToNoon = (station, data) => {
   const tempFlat = [].concat(...temp);
   const tempFlatNum = tempFlat.map(e => parseInt(e, 10));
 
-  // filter hourly temperature vlues above the chise percentage
+  // filter hourly temperature vlues above the chosen percentage
   const tempFlatNumAbove95RH = humFlatNumAbove95RH.map(
     (e, i) => e === 0 ? 0 : tempFlatNum[i]
   );

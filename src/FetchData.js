@@ -1,14 +1,3 @@
-import axios from "axios";
-import { format, addDays } from "date-fns";
-// import _ from "lodash";
-
-// utility functions
-import {
-  networkHumidityAdjustment,
-  networkTemperatureAdjustment,
-  michiganIdAdjustment
-} from "./utils";
-
 // Fetch acis data ----------------------------------------------------------------
 export function fetchACISData(station, startDate, endDate) {
   const params = {
@@ -28,7 +17,13 @@ export function fetchACISData(station, startDate, endDate) {
     .post("http://data.test.rcc-acis.org/StnData", params)
     .then(res => {
       if (!res.data.hasOwnProperty("error")) {
-        return res.data.data;
+        // Check if there are missing values
+        if (!containsMissingValues(res.data.data)) {
+          this.props.store.app.setACISData(noonToNoon(station, res.data.data));
+          this.props.store.app.setIsLoading(false);
+          return;
+        }
+        return replaceNonConsecutiveMissingValues(res.data.data);
       }
       console.log(res.data.error);
     })
@@ -51,7 +46,12 @@ export function getSisterStationIdAndNetwork(station) {
 }
 
 // Fetch sister station data -----------------------------------------------------
-export function fetchSisterStationData(idAndNetwork, startDate, endDate) {
+export function fetchSisterStationData(
+  station,
+  idAndNetwork,
+  startDate,
+  endDate
+) {
   const [id, network] = idAndNetwork.split(" ");
 
   const params = {
@@ -70,7 +70,13 @@ export function fetchSisterStationData(idAndNetwork, startDate, endDate) {
     .post("http://data.test.rcc-acis.org/StnData", params)
     .then(res => {
       if (!res.data.hasOwnProperty("error")) {
-        return res.data.data;
+        // Check if there are missing values
+        if (!containsMissingValues(res.data.data)) {
+          this.props.store.app.setACISData(noonToNoon(station, res.data.data));
+          this.props.store.app.setIsLoading(false);
+          return;
+        }
+        return replaceNonConsecutiveMissingValues(res.data.data);
       }
       console.log(res.data.error);
     })
@@ -81,9 +87,6 @@ export function fetchSisterStationData(idAndNetwork, startDate, endDate) {
 
 // Fetch forecast temperature --------------------------------------------------------
 export function fetchForecastTemps(station, startDate, endDate) {
-  console.log(
-    `http://newa.nrcc.cornell.edu/newaUtil/getFcstData/${station.id}/${station.network}/temp/${startDate}/${format(addDays(endDate, 6), "YYYY-MM-DD")}`
-  );
   return axios
     .get(
       `http://newa.nrcc.cornell.edu/newaUtil/getFcstData/${station.id}/${station.network}/temp/${startDate}/${format(addDays(endDate, 6), "YYYY-MM-DD")}`
@@ -124,13 +127,18 @@ export function fetchForecastData(station, startDate, endDate) {
       fetchForecastRH(station, startDate, endDate)
     ])
     .then(res => {
-      // console.log(res);
       const datesAndTemps = res[0];
       const rhum = res[1].map(day => day[1]);
       let data = datesAndTemps.map((day, i) => {
         return day.concat([rhum[i]]);
       });
-      return data;
+      // Check if there are missing values
+      if (!containsMissingValues(data)) {
+        this.props.store.app.setACISData(noonToNoon(station, data));
+        this.props.store.app.setIsLoading(false);
+        return;
+      }
+      return replaceNonConsecutiveMissingValues(data);
     })
     .catch(err => {
       console.log(err);

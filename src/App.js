@@ -1,27 +1,24 @@
 import React, { Component } from "react";
 import { inject, observer } from "mobx-react";
 import { when } from "mobx";
-// import { toJS } from "mobx";
-// import DevTools from "mobx-react-devtools";
+import { toJS } from "mobx";
+import DevTools from "mobx-react-devtools";
 import { BrowserRouter as Router, Route, Redirect } from "react-router-dom";
 import axios from "axios";
-// import { format, addDays } from "date-fns";
-import _ from "lodash";
-
-// Fetch ACIS Data
-import {
-  fetchACISData,
-  getSisterStationIdAndNetwork,
-  fetchSisterStationData,
-  fetchForecastData
-} from "./FetchData";
+import format from "date-fns/format";
+import addDays from "date-fns/add_days";
 
 // utility functions
 import {
   noonToNoon,
   replaceNonConsecutiveMissingValues,
   containsMissingValues,
-  replaceConsecutiveMissingValues
+  replaceConsecutiveMissingValues,
+  michiganIdAdjustment,
+  networkTemperatureAdjustment,
+  networkHumidityAdjustment,
+  fetchForecastTemps,
+  fetchForecastRH
 } from "./utils";
 
 // styled-components
@@ -88,65 +85,194 @@ class App extends Component {
 
     this.getData(station, startDate, endDate);
     this.props.store.app.setIsSubmitted(true);
-    this.props.store.app.setIsLoading(false);
+    // this.props.store.app.setIsLoading(false);
   };
 
+  // Fetch acis data ---------------------------------------------------------------------------------------------------
+  fetchACISData(station, startDate, endDate) {
+    const params = {
+      sid: `${michiganIdAdjustment(station)} ${station.network}`,
+      sdate: startDate,
+      // Plus 6 days because we account for the noonToNoon function
+      edate: format(addDays(endDate, 6), "YYYY-MM-DD"),
+      elems: [
+        networkTemperatureAdjustment(station.network),
+        networkHumidityAdjustment(station.network)
+      ]
+    };
+
+    console.log(params);
+
+    return axios
+      .post("http://data.test.rcc-acis.org/StnData", params)
+      .then(res => {
+        if (!res.data.hasOwnProperty("error")) {
+          const data = replaceNonConsecutiveMissingValues(res.data.data);
+          console.log("ORIGINAL ACIS DATA TEMP");
+          data.map(day => console.log(day[2].toString()));
+          // Check if there are missing values
+          if (!containsMissingValues(data)) {
+            this.props.store.app.setACISData(noonToNoon(station, data));
+            this.props.store.app.setIsLoading(false);
+            return;
+          }
+          return data;
+        }
+        console.log(res.data.error);
+      })
+      .catch(err => {
+        console.log(err);
+      });
+  }
+
+  // Get sister station Id and network ---------------------------------------------------------------------------------
+  getSisterStationIdAndNetwork(station) {
+    return axios(
+      `http://newa.nrcc.cornell.edu/newaUtil/stationSisterInfo/${station.id}/${station.network}`
+    )
+      .then(res => {
+        return res.data.temp;
+      })
+      .catch(err => {
+        console.log(err);
+      });
+  }
+
+  // Fetch sister station data -----------------------------------------------------------------------------------------
+  fetchSisterStationData(acis, station, idAndNetwork, startDate, endDate) {
+    const [id, network] = idAndNetwork.split(" ");
+
+    const params = {
+      sid: `${id} ${network}`,
+      sdate: startDate,
+      edate: format(addDays(endDate, 6), "YYYY-MM-DD"),
+      elems: [
+        networkTemperatureAdjustment(network),
+        networkHumidityAdjustment(network)
+      ]
+    };
+
+    console.log(params);
+
+    return axios
+      .post("http://data.test.rcc-acis.org/StnData", params)
+      .then(res => {
+        if (!res.data.hasOwnProperty("error")) {
+          let data = replaceConsecutiveMissingValues(res.data.data, acis);
+
+          // Check if there are missing values
+          if (!containsMissingValues(data)) {
+            this.props.store.app.setACISData(noonToNoon(station, data));
+            this.props.store.app.setIsLoading(false);
+            return;
+          }
+          return data;
+        }
+        console.log(res.data.error);
+      })
+      .catch(err => {
+        console.log(err);
+      });
+  }
+
+  // Fetch forecast temperature ----------------------------------------------------------------------------------------
+  fetchForecastTemps(station, startDate, endDate) {
+    return axios
+      .get(
+        `http://newa.nrcc.cornell.edu/newaUtil/getFcstData/${station.id}/${station.network}/temp/${startDate}/${format(addDays(endDate, 6), "YYYY-MM-DD")}`
+      )
+      .then(res => {
+        if (!res.data.hasOwnProperty("error")) {
+          return res.data.data;
+        }
+        console.log(res.data.error);
+      })
+      .catch(err => {
+        console.log(err);
+      });
+  }
+
+  // Fetch forecast relative humidity ----------------------------------------------------------------------------------
+  fetchForecastRH(station, startDate, endDate) {
+    return axios
+      .get(
+        `http://newa.nrcc.cornell.edu/newaUtil/getFcstData/${station.id}/${station.network}/rhum/${startDate}/${format(addDays(endDate, 6), "YYYY-MM-DD")}`
+      )
+      .then(res => {
+        if (!res.data.hasOwnProperty("error")) {
+          return res.data.data;
+        }
+        console.log(res.data.error);
+      })
+      .catch(err => {
+        console.log(err);
+      });
+  }
+
+  // Fetch forecast data -----------------------------------------------------------------------------------------------
+  fetchForecastData(sisterStationData, station, startDate, endDate) {
+    return axios
+      .all([
+        this.fetchForecastTemps(station, startDate, endDate),
+        this.fetchForecastRH(station, startDate, endDate)
+      ])
+      .then(res => {
+        const datesAndTemps = res[0];
+        const rhum = res[1].map(day => day[1]);
+        let data = datesAndTemps.map((day, i) => {
+          return day.concat([rhum[i]]);
+        });
+
+        data = replaceConsecutiveMissingValues(data, sisterStationData);
+        console.error("FORECAST TEMP");
+        data.map(day => console.log(day[2].toString()));
+
+        // Check if there are missing values
+        // if (!containsMissingValues(data)) {
+        this.props.store.app.setACISData(noonToNoon(station, data));
+        this.props.store.app.setIsLoading(false);
+        return;
+        // }
+        // return data;
+      })
+      .catch(err => {
+        console.log(err);
+      });
+  }
+
+  // Making the calls --------------------------------------------------------------------------------------------------
   async getData(station, startDate, endDate) {
     try {
       // Fetch ACIS data
-      let acis = await fetchACISData(station, startDate, endDate);
-      acis.map(day => console.log(day[1]));
-      console.log("----------------------------------");
+      let acis = await this.fetchACISData(station, startDate, endDate);
 
-      // Check if there are missing values
-      if (!containsMissingValues(acis)) {
-        return this.props.store.app.setACISData(noonToNoon(station, acis));
+      if (acis) {
+        console.error("ACIS TEMP");
+        acis.map(day => console.log(day[2].toString()));
+        // Get sister station id and network
+        const idAndNetwork = await this.getSisterStationIdAndNetwork(station);
+
+        // Fetch sister station data
+        const sisterStationData = await this.fetchSisterStationData(
+          acis,
+          station,
+          idAndNetwork,
+          startDate,
+          endDate
+        );
+
+        if (sisterStationData) {
+          console.error("SISTER STATION TEMP");
+          sisterStationData.map(day => console.log(day[2].toString()));
+          // Fetch forecast data
+          const forecastData = await this.fetchForecastData(
+            sisterStationData,
+            station,
+            startDate,
+            endDate
+          );
+        }
       }
-
-      // Replacing non consecutive missing values
-      acis = replaceNonConsecutiveMissingValues(acis);
-      acis.map(day => console.log(day[1]));
-      console.log("----------------------------------");
-
-      // Check if there are missing values
-      if (!containsMissingValues(acis)) {
-        return this.props.store.app.setACISData(noonToNoon(station, acis));
-      }
-
-      // Get sister station id and network
-      const idAndNetwork = await getSisterStationIdAndNetwork(station);
-
-      // Fetch sister station data
-      const sisterStationData = await fetchSisterStationData(
-        idAndNetwork,
-        startDate,
-        endDate
-      );
-
-      // Replace acis with sister station data
-      acis = replaceConsecutiveMissingValues(sisterStationData, acis);
-      acis.map(day => console.log(day[1]));
-      console.log("----------------------------------");
-
-      // Check if there are missing values
-      if (!containsMissingValues(acis)) {
-        return this.props.store.app.setACISData(noonToNoon(station, acis));
-      }
-
-      // Fetch forecast data
-      const forecastData = await fetchForecastData(station, startDate, endDate);
-      forecastData.map(day => console.log(day[1]));
-      console.log(forecastData);
-      console.log("----------------------------------");
-
-      // Replace acis with forecast data
-      acis = replaceConsecutiveMissingValues(forecastData, acis);
-      acis.map(day => console.log(day[1]));
-
-      // Check if there are missing values
-      // if (!containsMissingValues(acis)) {
-      //   return this.props.store.app.setACISData(noonToNoon(station, acis));
-      // }
     } catch (e) {
       console.error(e);
     }
@@ -154,10 +280,14 @@ class App extends Component {
 
   render() {
     const { state, isSubmitted } = this.props.store.app;
+    // console.error("ACISData RH");
+    // ACISData.map(e => e.rh).map(e => console.log(e.slice().toString()));
+    // console.error("ACISData TEMP");
+    // ACISData.map(e => e.temp).map(e => console.log(e.slice().toString()));
     return (
       <Router>
         <Page>
-          {/* <DevTools /> */}
+          <DevTools />
           <MyApp>
             <Testing />
             <h2 style={{ marginTop: "0" }}>Beet Model</h2>

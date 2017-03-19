@@ -9,10 +9,6 @@ import acisPic from "./images/PoweredbyACIS_NRCC.jpg";
 // Components
 import ResultsHeader from "./ResultsHeader";
 import ResultsTable from "./ResultsTable";
-// import ResultsStage from './ResultsStage';
-
-// style
-// import './results.css';
 
 //  styled-components
 import { Wrapper } from "../styles";
@@ -21,14 +17,8 @@ import { Centered, Images, Img } from "./styles";
 @inject("store")
 @observer
 export default class Results extends Component {
-  componentWillMount() {
-    this.props.store.app.setIsSubmitted(true);
-    this.props.store.app.setIsLoading(false);
-  }
-
   render() {
-    const { isLoading } = this.props.store.app;
-    if (isLoading) {
+    if (this.props.store.app.isLoading) {
       return (
         <Centered>
           Loading
@@ -51,9 +41,6 @@ export default class Results extends Component {
 
           {/* DATA */}
           <ResultsTable />
-
-          {/* DETAILS STAGE */}
-          {/* <ResultsStage /> */}
 
           {/* IMAGES */}
           <Images>

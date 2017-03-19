@@ -16,6 +16,10 @@ export default class AppStore {
   @action setIsLoading = d => this.isLoading = d;
   @observable missingValue = 0;
   @action setMissingValue = d => this.missingValue = d;
+  @computed get areRequiredFieldsSet() {
+    return Object.keys(this.state && this.station).length !== 0 &&
+      this.disease.length !== 0;
+  }
 
   //Disease--------------------------------------------------------------------------------------
   @observable disease = JSON.parse(localStorage.getItem("disease")) || "";
@@ -63,6 +67,7 @@ export default class AppStore {
   @action setStationR = d => this.stationR = d;
 
   // Dates---------------------------------------------------------------------------------------
+  @observable currentYear = new Date().getFullYear().toString();
   @observable endDate = JSON.parse(localStorage.getItem("endDate")) ||
     format(new Date(), "YYYY-MM-DD");
   @action setEndDate = d => {
