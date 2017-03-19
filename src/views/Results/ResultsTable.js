@@ -31,7 +31,9 @@ export default class ResultsTable extends Component {
       A2Day,
       A14Day,
       A21Day,
-      season
+      season,
+      currentYear,
+      startDateYear
     } = this.props.store.app;
 
     const months = dates.map(date => {
@@ -47,7 +49,7 @@ export default class ResultsTable extends Component {
     });
 
     let HeaderTable = null;
-    if (this.currentYear === format(endDateR, "YYYY")) {
+    if (currentYear === startDateYear) {
       HeaderTable = (
         <th className="after" colSpan="5">
           {" "}5 Days forecasts

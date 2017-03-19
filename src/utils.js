@@ -214,7 +214,7 @@ export const noonToNoon = (station, data) => {
   // console.log(`${humFlatNum}`);
   // filter relative humidity values above the chosen percentage
   // If there are NaN values it replaces with 0
-  const humFlatNumAbove95RH = humFlatNum.map(e => e > 20 ? e : 0);
+  const humFlatNumAbove95RH = humFlatNum.map(e => e > 80 ? e : 0);
 
   // unflatten RH array
   const humNumAbove95RH = [];

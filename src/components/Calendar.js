@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import { inject, observer } from "mobx-react";
-import { subYears, getYear } from "date-fns";
+// import { subYears, getYear } from "date-fns";
 
 import "flatpickr/dist/themes/material_orange.css";
 import Flatpickr from "react-flatpickr";
@@ -24,8 +24,8 @@ class Calendar extends Component {
             altFormat: "F j, Y",
             inline: false, // show the calendar inline
             altInputClass: "input-calender",
-            defaultDate: endDate ? endDate : new Date(),
-            minDate: `${getYear(subYears(new Date(), 1))}/01/01`
+            defaultDate: endDate ? endDate : new Date()
+            // minDate: `${getYear(subYears(new Date(), 1))}/01/01`
           }}
           onChange={d => this.props.store.app.setEndDate(d)}
         />

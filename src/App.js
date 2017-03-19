@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import { inject, observer } from "mobx-react";
 import { when } from "mobx";
-import { toJS } from "mobx";
+// import { toJS } from "mobx";
 import DevTools from "mobx-react-devtools";
 import { BrowserRouter as Router, Route, Redirect } from "react-router-dom";
 import axios from "axios";
@@ -16,9 +16,7 @@ import {
   replaceConsecutiveMissingValues,
   michiganIdAdjustment,
   networkTemperatureAdjustment,
-  networkHumidityAdjustment,
-  fetchForecastTemps,
-  fetchForecastRH
+  networkHumidityAdjustment
 } from "./utils";
 
 // styled-components
@@ -89,7 +87,9 @@ class App extends Component {
   };
 
   // Fetch acis data ---------------------------------------------------------------------------------------------------
-  fetchACISData(station, startDate, endDate) {
+  fetchACISData() {
+    const { station, startDate, endDate } = this.props.store.app;
+
     const params = {
       sid: `${michiganIdAdjustment(station)} ${station.network}`,
       sdate: startDate,
@@ -126,7 +126,8 @@ class App extends Component {
   }
 
   // Get sister station Id and network ---------------------------------------------------------------------------------
-  getSisterStationIdAndNetwork(station) {
+  getSisterStationIdAndNetwork() {
+    const { station } = this.props.store.app;
     return axios(
       `http://newa.nrcc.cornell.edu/newaUtil/stationSisterInfo/${station.id}/${station.network}`
     )
@@ -139,7 +140,14 @@ class App extends Component {
   }
 
   // Fetch sister station data -----------------------------------------------------------------------------------------
-  fetchSisterStationData(acis, station, idAndNetwork, startDate, endDate) {
+  fetchSisterStationData(acis, idAndNetwork) {
+    const {
+      station,
+      startDate,
+      endDate,
+      currentYear,
+      startDateYear
+    } = this.props.store.app;
     const [id, network] = idAndNetwork.split(" ");
 
     const params = {
@@ -166,6 +174,12 @@ class App extends Component {
             this.props.store.app.setIsLoading(false);
             return;
           }
+
+          if (currentYear !== startDateYear) {
+            this.props.store.app.setACISData(noonToNoon(station, data));
+            this.props.store.app.setIsLoading(false);
+            return;
+          }
           return data;
         }
         console.log(res.data.error);
@@ -176,7 +190,8 @@ class App extends Component {
   }
 
   // Fetch forecast temperature ----------------------------------------------------------------------------------------
-  fetchForecastTemps(station, startDate, endDate) {
+  fetchForecastTemps() {
+    const { station, startDate, endDate } = this.props.store.app;
     return axios
       .get(
         `http://newa.nrcc.cornell.edu/newaUtil/getFcstData/${station.id}/${station.network}/temp/${startDate}/${format(addDays(endDate, 6), "YYYY-MM-DD")}`
@@ -193,7 +208,9 @@ class App extends Component {
   }
 
   // Fetch forecast relative humidity ----------------------------------------------------------------------------------
-  fetchForecastRH(station, startDate, endDate) {
+  fetchForecastRH() {
+    const { station, startDate, endDate } = this.props.store.app;
+
     return axios
       .get(
         `http://newa.nrcc.cornell.edu/newaUtil/getFcstData/${station.id}/${station.network}/rhum/${startDate}/${format(addDays(endDate, 6), "YYYY-MM-DD")}`
@@ -210,12 +227,10 @@ class App extends Component {
   }
 
   // Fetch forecast data -----------------------------------------------------------------------------------------------
-  fetchForecastData(sisterStationData, station, startDate, endDate) {
+  fetchForecastData(sisterStationData) {
+    const { station } = this.props.store.app;
     return axios
-      .all([
-        this.fetchForecastTemps(station, startDate, endDate),
-        this.fetchForecastRH(station, startDate, endDate)
-      ])
+      .all([this.fetchForecastTemps(), this.fetchForecastRH()])
       .then(res => {
         const datesAndTemps = res[0];
         const rhum = res[1].map(day => day[1]);
@@ -241,36 +256,29 @@ class App extends Component {
   }
 
   // Making the calls --------------------------------------------------------------------------------------------------
-  async getData(station, startDate, endDate) {
+  async getData() {
+    const { currentYear, startDateYear } = this.props.store.app;
     try {
       // Fetch ACIS data
-      let acis = await this.fetchACISData(station, startDate, endDate);
+      let acis = await this.fetchACISData();
 
       if (acis) {
         console.error("ACIS TEMP");
         acis.map(day => console.log(day[2].toString()));
         // Get sister station id and network
-        const idAndNetwork = await this.getSisterStationIdAndNetwork(station);
+        const idAndNetwork = await this.getSisterStationIdAndNetwork();
 
         // Fetch sister station data
         const sisterStationData = await this.fetchSisterStationData(
           acis,
-          station,
-          idAndNetwork,
-          startDate,
-          endDate
+          idAndNetwork
         );
 
-        if (sisterStationData) {
+        if (sisterStationData && currentYear === startDateYear) {
           console.error("SISTER STATION TEMP");
           sisterStationData.map(day => console.log(day[2].toString()));
           // Fetch forecast data
-          const forecastData = await this.fetchForecastData(
-            sisterStationData,
-            station,
-            startDate,
-            endDate
-          );
+          this.fetchForecastData(sisterStationData);
         }
       }
     } catch (e) {
@@ -279,7 +287,8 @@ class App extends Component {
   }
 
   render() {
-    const { state, isSubmitted } = this.props.store.app;
+    const { state, isSubmitted, areRequiredFieldsSet } = this.props.store.app;
+    console.log(areRequiredFieldsSet);
     // console.error("ACISData RH");
     // ACISData.map(e => e.rh).map(e => console.log(e.slice().toString()));
     // console.error("ACISData TEMP");
@@ -302,7 +311,13 @@ class App extends Component {
                 <br />
                 <Calendar />
                 <br />
-                <CalculateBtn onClick={this.calculate}>Calculate</CalculateBtn>
+                {areRequiredFieldsSet
+                  ? <CalculateBtn onClick={this.calculate}>
+                      Calculate
+                    </CalculateBtn>
+                  : <CalculateBtn inactive onClick={this.calculate}>
+                      Calculate
+                    </CalculateBtn>}
 
               </LeftContainer>
 

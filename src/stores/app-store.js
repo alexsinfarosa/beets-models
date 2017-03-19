@@ -77,6 +77,9 @@ export default class AppStore {
   @computed get startDate() {
     return `${format(this.endDate, "YYYY")}-01-01`;
   }
+  @computed get startDateYear() {
+    return format(this.endDate, "YYYY");
+  }
   @observable endDateR = format(new Date(), "YYYY-MM-DD");
   @action setEndDateR = d => this.endDateR = format(d, "YYYY-MM-DD");
   @computed get startDateR() {

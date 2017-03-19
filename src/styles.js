@@ -106,6 +106,11 @@ export const CalculateBtn = styled.button`
   font-size: 14px;
   cursor: pointer;
 
+  cursor: ${props => props.inactive && "not-allowed"};
+  pointer-events: ${props => props.inactive && "none"};
+  opacity: ${props => props.inactive && "0.5"};
+
+
   &:hover {
     background-color: #FFFF66;
   }
