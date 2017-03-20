@@ -46,7 +46,7 @@ export default class ResultsTable extends Component {
             type="monotone"
             stackId="2"
             dataKey="caution"
-            stroke="#F4D35E"
+            stroke="#FDFA9F"
             fill="#FDFA9F"
           />
           <Area
@@ -62,7 +62,7 @@ export default class ResultsTable extends Component {
                 dataKey="daily"
                 label={<CustomBarLabel name="daily" />}
                 stroke="#808080"
-                fill="none"
+                fill="none" //#0A2E36
               />
             : <Bar
                 dataKey="a2Day"

@@ -26,7 +26,7 @@ export const Low = styled.td`
   background-color: #8FFD8D
 `;
 export const Caution = styled.td`
-  background-color: #F4D35E
+  background-color: #FCDDA6
 `;
 export const High = styled.td`
   background-color: #FF8B8B

@@ -128,11 +128,11 @@ export default class AppStore {
   @computed get infectionRisk() {}
 
   @computed get graphData() {
-    let maxHigh = 0;
+    let high = 7;
     if (this.dailyGraph) {
-      maxHigh = this.DICV;
+      high = Math.max(...this.DICV);
     } else {
-      maxHigh = this.A2Day;
+      high = Math.max(...this.A2Day);
     }
     return this.ACISData.map((day, i) => {
       return {
@@ -142,7 +142,7 @@ export default class AppStore {
         hrs: this.hrsRHs[i],
         low: 5,
         caution: 6,
-        high: Math.max(...maxHigh)
+        high: high < 6 ? null : high
       };
     });
   }

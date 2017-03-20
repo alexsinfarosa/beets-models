@@ -86,7 +86,7 @@ class App extends Component {
     // this.props.store.app.setIsLoading(false);
   };
 
-  // Fetch acis data ---------------------------------------------------------------------------------------------------
+  // Fetch acis data -------------------------------------------------------------------------
   fetchACISData() {
     const { station, startDate, endDate } = this.props.store.app;
 
@@ -125,7 +125,7 @@ class App extends Component {
       });
   }
 
-  // Get sister station Id and network ---------------------------------------------------------------------------------
+  // Get sister station Id and network --------------------------------------------------------
   getSisterStationIdAndNetwork() {
     const { station } = this.props.store.app;
     return axios(
@@ -139,7 +139,7 @@ class App extends Component {
       });
   }
 
-  // Fetch sister station data -----------------------------------------------------------------------------------------
+  // Fetch sister station data --------------------------------------------------------------
   fetchSisterStationData(acis, idAndNetwork) {
     const {
       station,
@@ -189,7 +189,7 @@ class App extends Component {
       });
   }
 
-  // Fetch forecast temperature ----------------------------------------------------------------------------------------
+  // Fetch forecast temperature ---------------------------------------------------------------
   fetchForecastTemps() {
     const { station, startDate, endDate } = this.props.store.app;
     return axios
@@ -207,7 +207,7 @@ class App extends Component {
       });
   }
 
-  // Fetch forecast relative humidity ----------------------------------------------------------------------------------
+  // Fetch forecast relative humidity ---------------------------------------------------------
   fetchForecastRH() {
     const { station, startDate, endDate } = this.props.store.app;
 
@@ -226,7 +226,7 @@ class App extends Component {
       });
   }
 
-  // Fetch forecast data -----------------------------------------------------------------------------------------------
+  // Fetch forecast data ------------------------------------------------------------------------
   fetchForecastData(sisterStationData) {
     const { station } = this.props.store.app;
     return axios
@@ -261,7 +261,7 @@ class App extends Component {
       });
   }
 
-  // Making the calls --------------------------------------------------------------------------------------------------
+  // Making the calls ----------------------------------------------------------------------------------------------
   async getData() {
     const { currentYear, startDateYear } = this.props.store.app;
     try {
