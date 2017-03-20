@@ -13,7 +13,7 @@ export const MyApp = styled.div`
   border: 1px solid #eee;
   border-radius: 5px;
   width: 915px;
-  height: 715px;
+  min-height: 715px;
   overflow-y: auto;
   display: flex;
   flex-direction: column;
@@ -27,6 +27,7 @@ export const Main = styled.div`
   display: flex;
   width: 100%;
   height: 100%;
+  flex: 1;
   ${/* background-color: orange; */ ""}
 `;
 
@@ -50,7 +51,8 @@ export const RightContainer = styled.div`
   padding: 10px;
   padding-top: 0;
   border-radius: 5px;
-  overflow: auto;
+  ${/* overflow: auto; */ ""}
+  ${/* height: 100%; */ ""}
 `;
 
 export const Ul = styled.ul`

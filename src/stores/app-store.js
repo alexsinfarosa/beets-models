@@ -23,6 +23,8 @@ export default class AppStore {
   @observable isGraphDisplayed = false;
   @action setIsGraphDisplayed = () =>
     this.isGraphDisplayed = !this.isGraphDisplayed;
+  @observable dailyGraph = true;
+  @action setDailyGraph = () => this.dailyGraph = !this.dailyGraph;
 
   //Disease--------------------------------------------------------------------------------------
   @observable disease = JSON.parse(localStorage.getItem("disease")) || "";
@@ -123,14 +125,24 @@ export default class AppStore {
       return e;
     });
   }
+  @computed get infectionRisk() {}
 
   @computed get graphData() {
+    let maxHigh = 0;
+    if (this.dailyGraph) {
+      maxHigh = this.DICV;
+    } else {
+      maxHigh = this.A2Day;
+    }
     return this.ACISData.map((day, i) => {
       return {
         dates: format(this.dates[i], "MMM D"),
         daily: this.DICV[i],
         a2Day: this.A2Day[i],
-        hrs: this.hrsRHs[i]
+        hrs: this.hrsRHs[i],
+        low: 5,
+        caution: 6,
+        high: Math.max(...maxHigh)
       };
     });
   }

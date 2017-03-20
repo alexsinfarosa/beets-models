@@ -1,10 +1,10 @@
 import React, { Component } from "react";
 import { inject, observer } from "mobx-react";
-import { observable } from "mobx";
 
 import {
-  BarChart,
+  ComposedChart,
   Bar,
+  Area,
   XAxis,
   YAxis,
   CartesianGrid,
@@ -19,25 +19,46 @@ import "./styles";
 @inject("store")
 @observer
 export default class ResultsTable extends Component {
-  @observable daily = true;
   render() {
-    const { graphData } = this.props.store.app;
+    const { graphData, dailyGraph, setDailyGraph } = this.props.store.app;
     return (
       <div className="graph">
-        <BarChart width={614} height={260} data={graphData}>
+        <ComposedChart
+          width={654}
+          height={320}
+          data={graphData}
+          margin={{ top: 20, right: 20, left: -30, bottom: 20 }}
+        >
           <XAxis dataKey="dates" tick={<CustomLabel />} />
           <YAxis />
           <Tooltip />
-          <Legend
-            verticalAlign="top"
-            height={36}
-            onClick={() => this.daily = !this.daily}
+          <Legend verticalAlign="top" height={36} onClick={setDailyGraph} />
+          <Area
+            type="monotone"
+            stackId="1"
+            dataKey="high"
+            stroke="#FF8B8B"
+            fill="#FF8B8B"
           />
-          <CartesianGrid stroke="#eee" strokeDasharray="5 5" />
-          {this.daily
-            ? <Bar dataKey="daily" fill="#8884d8" />
-            : <Bar dataKey="a2Day" fill="#82ca9d" />}
-        </BarChart>
+          <Area
+            type="monotone"
+            stackId="2"
+            dataKey="caution"
+            stroke="#F4D35E"
+            fill="#FDFA9F"
+          />
+          <Area
+            type="monotone"
+            stackId="3"
+            dataKey="low"
+            stroke="#8FFD8D"
+            fill="#8FFD8D"
+          />
+          {/* <CartesianGrid stroke="#eee" strokeDasharray="5 5" /> */}
+          {dailyGraph
+            ? <Bar dataKey="daily" stroke="#808080" fill="none" />
+            : <Bar dataKey="a2Day" stroke="#808080" fill="none" />}
+        </ComposedChart>
       </div>
     );
   }

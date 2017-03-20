@@ -23,11 +23,11 @@ export const Img = styled.img`
 `;
 
 export const Low = styled.td`
-  background-color: #0CCE6B
-`
+  background-color: #8FFD8D
+`;
 export const Caution = styled.td`
   background-color: #F4D35E
-`
+`;
 export const High = styled.td`
-  background-color: #E85F5C
-`
+  background-color: #FF8B8B
+`;

@@ -28,12 +28,12 @@ export default class ResultsHeader extends Component {
           </h4>
         </CenterText>
         <CenterText>
-          <h5 style={{ letterSpacing: "1px" }}>
-            {format(startDateR, "MM/DD/YYYY")}
+          <h5 style={{ letterSpacing: "0px" }}>
+            {format(startDateR, "MMM D YYYY")}
             {" "}
             through
             {" "}
-            {format(endDateR, "MM/DD/YYYY")}
+            {format(endDateR, "MMM D YYYY")}
           </h5>
         </CenterText>
       </div>
