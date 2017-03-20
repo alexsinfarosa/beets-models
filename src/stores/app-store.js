@@ -20,6 +20,9 @@ export default class AppStore {
     return Object.keys(this.state && this.station).length !== 0 &&
       this.disease.length !== 0;
   }
+  @observable isGraphDisplayed = false;
+  @action setIsGraphDisplayed = () =>
+    this.isGraphDisplayed = !this.isGraphDisplayed;
 
   //Disease--------------------------------------------------------------------------------------
   @observable disease = JSON.parse(localStorage.getItem("disease")) || "";
@@ -75,7 +78,7 @@ export default class AppStore {
     localStorage.setItem("endDate", JSON.stringify(this.endDate));
   };
   @computed get startDate() {
-    return `${format(this.endDate, "YYYY")}-01-01`;
+    return `${format(this.endDate, "YYYY")}-04-23`;
   }
   @computed get startDateYear() {
     return format(this.endDate, "YYYY");
@@ -83,7 +86,7 @@ export default class AppStore {
   @observable endDateR = format(new Date(), "YYYY-MM-DD");
   @action setEndDateR = d => this.endDateR = format(d, "YYYY-MM-DD");
   @computed get startDateR() {
-    return `${format(this.endDateR, "YYYY")}-01-01`;
+    return `${format(this.endDateR, "YYYY")}-04-23`;
   }
 
   // ACISData -----------------------------------------------------------------------------------
@@ -113,13 +116,40 @@ export default class AppStore {
     });
   }
   @computed get A2Day() {
-    const partial = this.DICV.slice(-9);
-    return partial.map((e, i) => {
-      if (i !== 0) {
-        return e + partial[i - 1];
+    return this.DICV.map((e, i) => {
+      if (i > 0) {
+        return e + this.DICV[i - 1];
       }
-      return 0;
+      return e;
     });
+  }
+
+  @computed get graphData() {
+    return this.ACISData.map((day, i) => {
+      return {
+        dates: format(this.dates[i], "MMM D"),
+        daily: this.DICV[i],
+        a2Day: this.A2Day[i],
+        hrs: this.hrsRHs[i]
+      };
+    });
+  }
+  // @computed get A14Day() {
+  //   const arrStart = this.DICV.slice(0, 14);
+  //   const sumArrStart = arrStart.reduce((acc, val) => acc + val);
+  //   let results = this.DICV.slice(14);
+  //   results.unshift(sumArrStart);
+  //   return cumulativeDICV(results);
+  // }
+  // @computed get A21Day() {
+  //   const arrStart = this.DICV.slice(0, 21);
+  //   const sumArrStart = arrStart.reduce((acc, val) => acc + val);
+  //   let results = this.DICV.slice(21);
+  //   results.unshift(sumArrStart);
+  //   return cumulativeDICV(results);
+  // }
+  @computed get season() {
+    return cumulativeDICV(this.DICV);
   }
   @computed get A14Day() {
     const partial = this.DICV.slice(-22); // to be fixed if date is to close to April 23rd
@@ -128,8 +158,5 @@ export default class AppStore {
   @computed get A21Day() {
     const partial = this.DICV.slice(-29);
     return cumulativeDICV(partial);
-  }
-  @computed get season() {
-    return cumulativeDICV(this.DICV);
   }
 }

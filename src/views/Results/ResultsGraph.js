@@ -1,44 +1,43 @@
-import React, { Component } from 'react';
-import { inject, observer } from 'mobx-react';
+import React, { Component } from "react";
+import { inject, observer } from "mobx-react";
+import { observable } from "mobx";
 
 import {
-  LineChart,
-  Line,
+  BarChart,
+  Bar,
   XAxis,
   YAxis,
   CartesianGrid,
-  Tooltip
-} from 'recharts';
-import CustomLabel from './CustomLabel';
+  Tooltip,
+  Legend
+} from "recharts";
+import CustomLabel from "./CustomLabel";
 
 // styles
-import './styles'
+import "./styles";
 
-@inject('store')
+@inject("store")
 @observer
 export default class ResultsTable extends Component {
-
+  @observable daily = true;
   render() {
-    const {cumulativeDegreeDayDataGraph} = this.props.store.app;
+    const { graphData } = this.props.store.app;
     return (
       <div className="graph">
-        <LineChart
-          width={614}
-          height={260}
-          data={cumulativeDegreeDayDataGraph}
-        >
-          <XAxis dataKey="Date" tick={<CustomLabel />} />
+        <BarChart width={614} height={260} data={graphData}>
+          <XAxis dataKey="dates" tick={<CustomLabel />} />
           <YAxis />
           <Tooltip />
-          <CartesianGrid stroke="#eee" strokeDasharray="5 5" />
-          <Line
-            type="monotone"
-            dataKey="Accumulated Degree-Days"
-            dot={false}
-            stroke="black"
-            activeDot={{ r: 7 }}
+          <Legend
+            verticalAlign="top"
+            height={36}
+            onClick={() => this.daily = !this.daily}
           />
-        </LineChart>
+          <CartesianGrid stroke="#eee" strokeDasharray="5 5" />
+          {this.daily
+            ? <Bar dataKey="daily" fill="#8884d8" />
+            : <Bar dataKey="a2Day" fill="#82ca9d" />}
+        </BarChart>
       </div>
     );
   }

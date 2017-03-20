@@ -1,6 +1,5 @@
 import React, { Component } from "react";
 import { inject, observer } from "mobx-react";
-import { observable, action } from "mobx";
 import ResultsGraph from "./ResultsGraph";
 import _ from "lodash";
 import { format, isBefore, subDays } from "date-fns";
@@ -14,14 +13,6 @@ import { Low, Caution, High } from "./styles";
 @inject("store")
 @observer
 export default class ResultsTable extends Component {
-  @observable isGraphDisplayed = false;
-  @action setIsGraphDisplayed = d => this.isGraphDisplayed = d;
-  @observable currentYear = format(new Date(), "YYYY");
-
-  handleGraphClick = () => {
-    this.setIsGraphDisplayed(!this.isGraphDisplayed);
-  };
-
   render() {
     const {
       dates,
@@ -33,7 +24,9 @@ export default class ResultsTable extends Component {
       A21Day,
       season,
       currentYear,
-      startDateYear
+      startDateYear,
+      isGraphDisplayed,
+      setIsGraphDisplayed
     } = this.props.store.app;
 
     const months = dates.map(date => {
@@ -138,13 +131,13 @@ export default class ResultsTable extends Component {
           </tr>
           <tr>
             <td colSpan="9" className="has-text-centered graph">
-              <a className="graph-link" onClick={this.handleGraphClick}>
-                {this.isGraphDisplayed ? "Hide" : "Show"}
+              <a className="graph-link" onClick={setIsGraphDisplayed}>
+                {isGraphDisplayed ? "Hide" : "Show"}
                 {" "}
-                Accumulated Degree-Days Graph
+                Infection Value Graph
               </a>
 
-              {this.isGraphDisplayed && <ResultsGraph />}
+              {isGraphDisplayed && <ResultsGraph />}
             </td>
           </tr>
         </tbody>

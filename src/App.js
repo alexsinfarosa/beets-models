@@ -101,15 +101,15 @@ class App extends Component {
       ]
     };
 
-    console.log(params);
+    // console.log(params);
 
     return axios
       .post("http://data.test.rcc-acis.org/StnData", params)
       .then(res => {
         if (!res.data.hasOwnProperty("error")) {
           const data = replaceNonConsecutiveMissingValues(res.data.data);
-          console.log("ORIGINAL ACIS DATA TEMP");
-          data.map(day => console.log(day[1].toString()));
+          // console.log("ORIGINAL ACIS DATA TEMP");
+          // data.map(day => console.log(day[1].toString()));
           // Check if there are missing values
           if (!containsMissingValues(data)) {
             this.props.store.app.setACISData(noonToNoon(station, data));
@@ -234,19 +234,19 @@ class App extends Component {
       .then(res => {
         const datesAndTemps = res[0];
         let rhum = res[1].map(day => day[1]);
-        rhum.map(day => console.log(day));
+        // rhum.map(day => console.log(day));
         rhum = rhum.map(day =>
           day.map(e => Math.round(e / (0.0047 * e + 0.53))));
 
-        rhum.map(day => console.log(day));
+        // rhum.map(day => console.log(day));
 
         let data = datesAndTemps.map((day, i) => {
           return day.concat([rhum[i]]);
         });
 
         data = replaceConsecutiveMissingValues(data, sisterStationData);
-        console.error("FORECAST TEMP");
-        data.map(day => console.log(day[2].toString()));
+        // console.error("FORECAST TEMP");
+        // data.map(day => console.log(day[2].toString()));
 
         // Check if there are missing values
         // if (!containsMissingValues(data)) {
@@ -269,8 +269,8 @@ class App extends Component {
       let acis = await this.fetchACISData();
 
       if (acis) {
-        console.error("ACIS TEMP");
-        acis.map(day => console.log(day[2].toString()));
+        // console.error("ACIS TEMP");
+        // acis.map(day => console.log(day[2].toString()));
         // Get sister station id and network
         const idAndNetwork = await this.getSisterStationIdAndNetwork();
 
@@ -281,8 +281,8 @@ class App extends Component {
         );
 
         if (sisterStationData && currentYear === startDateYear) {
-          console.error("SISTER STATION TEMP");
-          sisterStationData.map(day => console.log(day[2].toString()));
+          // console.error("SISTER STATION TEMP");
+          // sisterStationData.map(day => console.log(day[2].toString()));
           // Fetch forecast data
           this.fetchForecastData(sisterStationData);
         }
@@ -293,7 +293,15 @@ class App extends Component {
   }
 
   render() {
-    const { state, isSubmitted, areRequiredFieldsSet } = this.props.store.app;
+    const {
+      state,
+      isSubmitted,
+      areRequiredFieldsSet,
+      // ACISData,
+      graphData
+    } = this.props.store.app;
+    // ACISData.map(day => console.log(toJS(day)));
+    graphData.slice(0, 2).map(d => console.log(d));
     // console.error("ACISData RH");
     // ACISData.map(e => e.rh).map(e => console.log(e.slice().toString()));
     // console.error("ACISData TEMP");
