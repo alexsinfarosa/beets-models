@@ -8,7 +8,7 @@ import {
   XAxis,
   YAxis,
   // CartesianGrid,
-  Tooltip,
+  // Tooltip,
   Legend
 } from "recharts";
 import CustomLabel from "./CustomLabel";

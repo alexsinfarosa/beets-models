@@ -2,8 +2,8 @@ import React, { Component } from "react";
 
 export default class CustomBarLabel extends Component {
   render() {
-    const { x, y, stroke, payload, height, name, width } = this.props;
-    console.log(this.props);
+    const { x, y, payload, height, name, width } = this.props;
+    // console.log(this.props);
     return (
       <svg>
         <text
