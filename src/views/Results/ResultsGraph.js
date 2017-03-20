@@ -7,11 +7,13 @@ import {
   Area,
   XAxis,
   YAxis,
-  CartesianGrid,
+  // CartesianGrid,
   Tooltip,
   Legend
 } from "recharts";
 import CustomLabel from "./CustomLabel";
+// import CustomToolTip from "./CustomToolTip";
+import CustomBarLabel from "./CustomBarLabel";
 
 // styles
 import "./styles";
@@ -31,7 +33,7 @@ export default class ResultsTable extends Component {
         >
           <XAxis dataKey="dates" tick={<CustomLabel />} />
           <YAxis />
-          <Tooltip />
+          {/* <Tooltip /> */}
           <Legend verticalAlign="top" height={36} onClick={setDailyGraph} />
           <Area
             type="monotone"
@@ -56,8 +58,18 @@ export default class ResultsTable extends Component {
           />
           {/* <CartesianGrid stroke="#eee" strokeDasharray="5 5" /> */}
           {dailyGraph
-            ? <Bar dataKey="daily" stroke="#808080" fill="none" />
-            : <Bar dataKey="a2Day" stroke="#808080" fill="none" />}
+            ? <Bar
+                dataKey="daily"
+                label={<CustomBarLabel name="daily" />}
+                stroke="#808080"
+                fill="none"
+              />
+            : <Bar
+                dataKey="a2Day"
+                label={<CustomBarLabel name="a2Day" />}
+                stroke="#808080"
+                fill="none"
+              />}
         </ComposedChart>
       </div>
     );

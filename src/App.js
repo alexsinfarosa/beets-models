@@ -312,7 +312,9 @@ class App extends Component {
           <DevTools />
           <MyApp>
             <Testing />
-            <h2 style={{ marginTop: "0" }}>Beet Model</h2>
+            <h2 style={{ marginTop: "0" }}>
+              Cercospora Beticola Infection Prediction Model
+            </h2>
             <Main>
               <LeftContainer>
 
