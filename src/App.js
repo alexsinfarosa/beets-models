@@ -109,7 +109,7 @@ class App extends Component {
         if (!res.data.hasOwnProperty("error")) {
           const data = replaceNonConsecutiveMissingValues(res.data.data);
           console.log("ORIGINAL ACIS DATA TEMP");
-          data.map(day => console.log(day[2].toString()));
+          data.map(day => console.log(day[1].toString()));
           // Check if there are missing values
           if (!containsMissingValues(data)) {
             this.props.store.app.setACISData(noonToNoon(station, data));
@@ -233,7 +233,13 @@ class App extends Component {
       .all([this.fetchForecastTemps(), this.fetchForecastRH()])
       .then(res => {
         const datesAndTemps = res[0];
-        const rhum = res[1].map(day => day[1]);
+        let rhum = res[1].map(day => day[1]);
+        rhum.map(day => console.log(day));
+        rhum = rhum.map(day =>
+          day.map(e => Math.round(e / (0.0047 * e + 0.53))));
+
+        rhum.map(day => console.log(day));
+
         let data = datesAndTemps.map((day, i) => {
           return day.concat([rhum[i]]);
         });
@@ -288,7 +294,6 @@ class App extends Component {
 
   render() {
     const { state, isSubmitted, areRequiredFieldsSet } = this.props.store.app;
-    console.log(areRequiredFieldsSet);
     // console.error("ACISData RH");
     // ACISData.map(e => e.rh).map(e => console.log(e.slice().toString()));
     // console.error("ACISData TEMP");
