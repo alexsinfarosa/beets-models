@@ -61,6 +61,8 @@ class App extends Component {
       .get("http://newa.nrcc.cornell.edu/newaUtil/stateStationList/all")
       .then(res => {
         this.props.store.app.setStations(res.data.stations);
+        this.calculate();
+        this.props.store.app.setIsGraphDisplayed(true);
       })
       .catch(err => {
         console.log(err);
@@ -301,7 +303,7 @@ class App extends Component {
       graphData
     } = this.props.store.app;
     // ACISData.map(day => console.log(toJS(day)));
-    graphData.slice(0, 2).map(d => console.log(d));
+    graphData.slice(0, 10).map(d => console.log(d));
     // console.error("ACISData RH");
     // ACISData.map(e => e.rh).map(e => console.log(e.slice().toString()));
     // console.error("ACISData TEMP");

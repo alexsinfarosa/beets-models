@@ -65,7 +65,10 @@ export default class ResultsTable extends Component {
       );
     }
 
-    const daily = DICV.map((e, i) => {
+    // const displayA2Day = A2Day.map((e, i) => <td key={i}>{e}</td>);
+    const daily = DICV.map((e, i) => <td key={i}>{e}</td>);
+
+    const displayA2Day = A2Day.map((e, i) => {
       if (e < 6) {
         return <Low key={i}>{e}</Low>;
       } else if (e === 6) {
@@ -74,15 +77,13 @@ export default class ResultsTable extends Component {
       return <High key={i}>{e}</High>;
     });
 
-    const displayA2Day = A2Day.map((e, i) => <td key={i}>{e}</td>);
-
-    const dailyInfectionRisk = DICV.map((e, i) => {
+    const a2DayInfectionRisk = A2Day.map((e, i) => {
       if (e < 6) {
-        return <Low key={i}>Low</Low>;
+        return <Low key={i}><small>Unfavorable</small></Low>;
       } else if (e === 6) {
-        return <Caution key={i}>Caution</Caution>;
+        return <Caution key={i}><small>Marginal</small></Caution>;
       }
-      return <High key={i}>High</High>;
+      return <High key={i}><small>Favorable</small></High>;
     });
 
     const displayA14Day = A14Day.map((e, i) => <td key={i}>{e}</td>);
@@ -110,12 +111,12 @@ export default class ResultsTable extends Component {
             {_.takeRight(daily, 8)}
           </tr>
           <tr>
-            <th><small>Daily <br /> Infection Level</small></th>
-            {_.takeRight(dailyInfectionRisk, 8)}
-          </tr>
-          <tr>
             <th><small>2-Day <br /> Total Infection Values</small></th>
             {_.takeRight(displayA2Day, 8)}
+          </tr>
+          <tr>
+            <th><small>Daily <br /> Infection Risk</small></th>
+            {_.takeRight(a2DayInfectionRisk, 8)}
           </tr>
           <tr>
             <th><small>14-Day <br />Accum. Infection Values</small></th>
