@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import { inject, observer } from "mobx-react";
+import { format } from "date-fns";
 
 import {
   ComposedChart,
@@ -34,7 +35,7 @@ export default class ResultsTable extends Component {
         // console.log(payload[3]);
         return (
           <StyledTooltip>
-            <h5>{label}</h5>
+            <h5>{format(label, "MMMM Do")}</h5>
             <p style={{ color: payload[3].color }}>
               {`${payload[3].name} Infection Values: ${payload[3].value}`}
             </p>

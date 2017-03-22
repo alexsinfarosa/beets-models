@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 
+
 export default class CustomToolTip extends Component {
   getIntroOfPage(label) {
     if (label === "Page A") {
@@ -13,11 +14,15 @@ export default class CustomToolTip extends Component {
     const { active } = this.props;
     if (active) {
       const { payload, label } = this.props;
+      console.log(label);
+      console.log(format(label, "MMMM Do"));
       return (
-        <div className="custom-tooltip">
-          <p className="label">{`${label} : ${payload[0].value}`}</p>
-          <p className="intro">{this.getIntroOfPage(label)}</p>
-          <p className="desc">Anything you want can be displayed here.</p>
+        <div>
+          <p>
+            {`${format(label, "MMMM Do")} : ${payload[0].value}`}
+          </p>
+          <p>{this.getIntroOfPage(label)}</p>
+          <p>Anything you want can be displayed here.</p>
         </div>
       );
     }

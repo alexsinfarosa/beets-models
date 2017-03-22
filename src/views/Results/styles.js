@@ -33,8 +33,9 @@ export const High = styled.td`
 `;
 
 export const StyledTooltip = styled.div`
-  background-color: #F4F0EC;
+  background-color: #FFF;
+  opacity: 0.9;
   border-radius: 5px;
   margin: 0;
-  padding: 5px 15px;
+  padding: 10px 10px;
 `;
