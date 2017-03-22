@@ -10,9 +10,9 @@ export default class CustomBar extends Component {
 
   setBarColor = e => {
     const fill = e.target.getAttribute("fill");
-    if (fill === "#7F9B6B") {
+    if (fill === "#81C784") {
       this.setHover("#4CAF50");
-    } else if (fill === "#E6CFA5") {
+    } else if (fill === "#FDD835") {
       this.setHover("#FFEB3B");
     } else {
       this.setHover("#f44336");
@@ -34,7 +34,7 @@ export default class CustomBar extends Component {
           y={y}
           width={width}
           height={height}
-          fill={this.hover ? this.hover : "#7F9B6B"}
+          fill={this.hover ? this.hover : "#81C784"}
           onMouseOver={this.setBarColor}
           onMouseOut={this.setDefaultColor}
         />
@@ -46,7 +46,7 @@ export default class CustomBar extends Component {
           y={y}
           width={width}
           height={height}
-          fill={this.hover ? this.hover : "#E6CFA5"}
+          fill={this.hover ? this.hover : "#FDD835"}
           onMouseOver={this.setBarColor}
           onMouseOut={this.setDefaultColor}
         />
@@ -58,7 +58,7 @@ export default class CustomBar extends Component {
         y={y}
         width={width}
         height={height}
-        fill={this.hover ? this.hover : "#CD9E9C"}
+        fill={this.hover ? this.hover : "#e57373"}
         onMouseOver={this.setBarColor}
         onMouseOut={this.setDefaultColor}
       />
