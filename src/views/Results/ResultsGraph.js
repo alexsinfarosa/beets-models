@@ -87,6 +87,7 @@ export default class ResultsTable extends Component {
             dataKey="favorable"
             stroke="#FFA0A0"
             fill="#FFA0A0"
+            opacity={0.7}
           />
           <Area
             activeDot={false}
@@ -96,6 +97,7 @@ export default class ResultsTable extends Component {
             dataKey="marginal"
             stroke="#FDFAB0"
             fill="#FDFAB0"
+            opacity={0.7}
           />
           <Area
             activeDot={false}
@@ -105,6 +107,7 @@ export default class ResultsTable extends Component {
             dataKey="unfavorable"
             stroke="#A3FDA1"
             fill="#A3FDA1"
+            opacity={0.7}
           />
           <Bar
             name="2-Day"

@@ -344,7 +344,7 @@ class App extends Component {
                   <NavLinkStyled
                     exact
                     activeStyle={{
-                      color: "#544C45",
+                      color: "#b85700",
                       backgroundColor: "#F4F0EC",
                       marginBottom: "-1px"
                     }}
@@ -355,7 +355,7 @@ class App extends Component {
                   <NavLinkStyled
                     exact
                     activeStyle={{
-                      color: "#544C45",
+                      color: "#b85700",
                       backgroundColor: "#F4F0EC",
                       marginBottom: "-1px"
                     }}
@@ -366,7 +366,7 @@ class App extends Component {
                   <NavLinkStyled
                     exact
                     activeStyle={{
-                      color: "#544C45",
+                      color: "#b85700",
                       backgroundColor: "#F4F0EC",
                       marginBottom: "-1px"
                     }}
