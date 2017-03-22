@@ -25,6 +25,8 @@ export default class AppStore {
     this.isGraphDisplayed = !this.isGraphDisplayed;
   @observable dailyGraph = true;
   @action setDailyGraph = () => this.dailyGraph = !this.dailyGraph;
+  @observable barColor;
+  @action setBarColor = d => this.barColor = d;
 
   //Disease--------------------------------------------------------------------------------------
   @observable disease = JSON.parse(localStorage.getItem("disease")) || "";

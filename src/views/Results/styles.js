@@ -31,3 +31,10 @@ export const Caution = styled.td`
 export const High = styled.td`
   background-color: #FAC0BE
 `;
+
+export const StyledTooltip = styled.div`
+  background-color: #F4F0EC;
+  border-radius: 5px;
+  margin: 0;
+  padding: 5px 15px;
+`;
