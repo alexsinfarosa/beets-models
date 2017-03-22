@@ -28,7 +28,7 @@ export default class ResultsTable extends Component {
   render() {
     const { graphData, barColor } = this.props.store.app;
 
-    const renderLegend = props => {
+    const renderTooltip = props => {
       const { payload, label } = props;
       if (payload.length > 0) {
         // console.log(payload[3]);
@@ -36,7 +36,7 @@ export default class ResultsTable extends Component {
           <StyledTooltip>
             <h5>{label}</h5>
             <p style={{ color: payload[3].color }}>
-              {`${payload[3].name}: ${payload[3].value}`}
+              {`${payload[3].name} Infection Values: ${payload[3].value}`}
             </p>
           </StyledTooltip>
         );
@@ -56,7 +56,7 @@ export default class ResultsTable extends Component {
         >
           <XAxis dataKey="dates" name="ciccio" tick={<CustomLabel />} />
           <YAxis dataKey="a2Day" name="bello" />
-          <Tooltip content={renderLegend} offset={20} />
+          <Tooltip content={renderTooltip} offset={20} />
           <Legend
             wrapperStyle={{ paddingTop: "30px" }}
             verticalAlign="bottom"
