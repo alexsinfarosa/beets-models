@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import { inject, observer } from "mobx-react";
 import { when } from "mobx";
-import { toJS } from "mobx";
+// import { toJS } from "mobx";
 import DevTools from "mobx-react-devtools";
 import { BrowserRouter as Router, Route, Redirect } from "react-router-dom";
 import axios from "axios";
@@ -297,14 +297,11 @@ class App extends Component {
   render() {
     const {
       state,
-      station,
       isSubmitted,
       areRequiredFieldsSet
       // ACISData,
       // graphData
     } = this.props.store.app;
-    console.log(this.props.store.app.areRequiredFieldsSet);
-    console.log(toJS(station));
     // ACISData.map(day => console.log(toJS(day)));
     // graphData.slice(0, 10).map(d => console.log(d));
     // console.error("ACISData RH");
@@ -344,9 +341,39 @@ class App extends Component {
               <RightContainer>
 
                 <Ul>
-                  <NavLinkStyled to="/map">Map</NavLinkStyled>
-                  <NavLinkStyled to="/results">Results</NavLinkStyled>
-                  <NavLinkStyled to="/moreinfo">More Info</NavLinkStyled>
+                  <NavLinkStyled
+                    exact
+                    activeStyle={{
+                      color: "#544C45",
+                      backgroundColor: "#F4F0EC",
+                      marginBottom: "-1px"
+                    }}
+                    to="/map"
+                  >
+                    Map
+                  </NavLinkStyled>
+                  <NavLinkStyled
+                    exact
+                    activeStyle={{
+                      color: "#544C45",
+                      backgroundColor: "#F4F0EC",
+                      marginBottom: "-1px"
+                    }}
+                    to="/results"
+                  >
+                    Results
+                  </NavLinkStyled>
+                  <NavLinkStyled
+                    exact
+                    activeStyle={{
+                      color: "#544C45",
+                      backgroundColor: "#F4F0EC",
+                      marginBottom: "-1px"
+                    }}
+                    to="/moreinfo"
+                  >
+                    More Info
+                  </NavLinkStyled>
                 </Ul>
 
                 <Route
