@@ -29,11 +29,11 @@ export default class ResultsHeader extends Component {
         </CenterText>
         <CenterText>
           <h5 style={{ letterSpacing: "0px" }}>
-            {format(startDateR, "MMM D YYYY")}
+            {format(startDateR, "MMMM Do YYYY")}
             {" "}
-            through
+            <span style={{ fontWeight: "100" }}>through</span>
             {" "}
-            {format(endDateR, "MMM D YYYY")}
+            {format(endDateR, "MMMM Do YYYY")}
           </h5>
         </CenterText>
       </div>

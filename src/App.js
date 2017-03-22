@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import { inject, observer } from "mobx-react";
 import { when } from "mobx";
-// import { toJS } from "mobx";
+import { toJS } from "mobx";
 import DevTools from "mobx-react-devtools";
 import { BrowserRouter as Router, Route, Redirect } from "react-router-dom";
 import axios from "axios";
@@ -162,7 +162,7 @@ class App extends Component {
       ]
     };
 
-    console.log(params);
+    // console.log(params);
 
     return axios
       .post("http://data.test.rcc-acis.org/StnData", params)
@@ -297,13 +297,16 @@ class App extends Component {
   render() {
     const {
       state,
+      station,
       isSubmitted,
-      areRequiredFieldsSet,
+      areRequiredFieldsSet
       // ACISData,
-      graphData
+      // graphData
     } = this.props.store.app;
+    console.log(this.props.store.app.areRequiredFieldsSet);
+    console.log(toJS(station));
     // ACISData.map(day => console.log(toJS(day)));
-    graphData.slice(0, 10).map(d => console.log(d));
+    // graphData.slice(0, 10).map(d => console.log(d));
     // console.error("ACISData RH");
     // ACISData.map(e => e.rh).map(e => console.log(e.slice().toString()));
     // console.error("ACISData TEMP");

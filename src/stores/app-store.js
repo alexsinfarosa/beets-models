@@ -9,7 +9,7 @@ import { table } from "../views/Results/table";
 import { format } from "date-fns";
 
 export default class AppStore {
-  // logic---------------------------------------------------------------------------------------
+  // logic------------------------------------------------------------------------------------
   @observable isSubmitted = false;
   @action setIsSubmitted = d => this.isSubmitted = d;
   @observable isLoading = true;
@@ -28,7 +28,7 @@ export default class AppStore {
   @observable barColor;
   @action setBarColor = d => this.barColor = d;
 
-  //Disease--------------------------------------------------------------------------------------
+  //Disease------------------------------------------------------------------------------------
   @observable disease = JSON.parse(localStorage.getItem("disease")) || "";
   @action setDisease = d => {
     this.disease = d;
@@ -39,7 +39,7 @@ export default class AppStore {
   @observable diseaseR = "";
   @action setDiseaseR = d => this.diseaseR = d;
 
-  //State----------------------------------------------------------------------------------------
+  //State--------------------------------------------------------------------------------------
   @observable state = JSON.parse(localStorage.getItem("state")) || {};
   @action setState = stateName => {
     this.state = states.filter(state => state.name === stateName)[0];

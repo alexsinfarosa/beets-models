@@ -7,6 +7,9 @@ import { Wrapper, Link } from "./styles";
 @inject("store")
 @observer
 export default class MoreInfo extends Component {
+  componentDidMount() {
+    this.props.store.app.setIsSubmitted(false);
+  }
   render() {
     return (
       <Wrapper>

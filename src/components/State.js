@@ -14,7 +14,7 @@ class State extends Component {
     this.props.store.app.setSelectState(true);
     this.props.store.app.setState(e.target.value);
     this.props.store.app.setSelectStation(false);
-    // this.props.store.app.setStation({});
+    this.props.store.app.station = {};
   };
 
   render() {

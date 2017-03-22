@@ -34,6 +34,10 @@ export default class TheMap extends Component {
     }
   };
 
+  componentDidMount() {
+    this.props.store.app.setIsSubmitted(false);
+  }
+
   render() {
     // const position = [this.state.lat, this.state.lng];
     const { stationsWithMatchedIcons, state } = this.props.store.app;
