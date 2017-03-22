@@ -1,5 +1,4 @@
 import React, { Component } from "react";
-import { action } from "mobx";
 import { inject, observer } from "mobx-react";
 import { states } from "../utils";
 import { TileLayer, Marker } from "react-leaflet";
@@ -15,7 +14,7 @@ const myIcon = e => L.icon({
 @inject("store")
 @observer
 export default class TheMap extends Component {
-  @action onClickSetStation = e => {
+  onClickSetStation = e => {
     const { lat, lng } = e.latlng;
     const { stations, state } = this.props.store.app;
     const selectedStation = stations.filter(
