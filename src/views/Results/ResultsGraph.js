@@ -45,7 +45,16 @@ export default class ResultsTable extends Component {
 
     return (
       <div>
-        <Text style={{ display: "block", marginTop: "20px", fontSize: "16px" }}>
+        <Text
+          style={{
+            display: "block",
+            marginTop: "20px",
+            fontSize: "16px",
+            marginBottom: "5px",
+            fontWeight: "700",
+            letterSpacing: "1px"
+          }}
+        >
           2-Day Infection Values
         </Text>
         <ComposedChart
