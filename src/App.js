@@ -16,7 +16,8 @@ import {
   replaceConsecutiveMissingValues,
   michiganIdAdjustment,
   networkTemperatureAdjustment,
-  networkHumidityAdjustment
+  networkHumidityAdjustment,
+  above95Only
 } from "./utils";
 
 // styled-components
@@ -110,9 +111,6 @@ class App extends Component {
       .then(res => {
         if (!res.data.hasOwnProperty("error")) {
           const data = replaceNonConsecutiveMissingValues(res.data.data);
-          // console.log("ORIGINAL ACIS DATA TEMP");
-          // data.map(day => console.log(day[1].toString()));
-          // Check if there are missing values
           if (!containsMissingValues(data)) {
             this.props.store.app.setACISData(noonToNoon(station, data));
             this.props.store.app.setIsLoading(false);

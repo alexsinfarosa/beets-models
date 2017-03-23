@@ -13,7 +13,7 @@ export const states = [
   { postalCode: "DC", lat: 38.9101, lon: -77.0147, zoom: 8, name: "DC" },
   { postalCode: "IL", lat: 40.0411, lon: -89.1965, zoom: 6, name: "Illinois" },
   { postalCode: "IA", lat: 42.0753, lon: -93.4959, zoom: 6, name: "Iowa" },
-  { postalCode: "ME", lat: 45.3702, lon: -69.2438, zoom: 7, name: "Maine" }, // no stations
+  // { postalCode: "ME", lat: 45.3702, lon: -69.2438, zoom: 7, name: "Maine" }, // no stations
   { postalCode: "MD", lat: 39.0550, lon: -76.7909, zoom: 7, name: "Maryland" },
   {
     postalCode: "MA",
@@ -22,7 +22,7 @@ export const states = [
     zoom: 7,
     name: "Massachusetts"
   },
-  { postalCode: "MI", lat: 44.3461, lon: -85.4114, zoom: 6, name: "Michigan" }, // no stations
+  { postalCode: "MI", lat: 44.3461, lon: -85.4114, zoom: 6, name: "Michigan" },
   { postalCode: "MN", lat: 46.2810, lon: -94.3046, zoom: 6, name: "Minnesota" },
   { postalCode: "MO", lat: 38.3568, lon: -92.4571, zoom: 6, name: "Missouri" },
   { postalCode: "NE", lat: 41.5392, lon: -99.7968, zoom: 6, name: "Nebraska" },
@@ -214,7 +214,7 @@ export const noonToNoon = (station, data) => {
   // console.log(`${humFlatNum}`);
   // filter relative humidity values above the chosen percentage
   // If there are NaN values it replaces with 0
-  const humFlatNumAbove95RH = humFlatNum.map(e => e > 85 ? e : 0);
+  const humFlatNumAbove95RH = humFlatNum.map(e => e > 95 ? e : 0);
 
   // unflatten RH array
   const humNumAbove95RH = [];
@@ -331,4 +331,24 @@ export const matchIconsToStations = (stations, state) => {
     }
   });
   return arr;
+};
+
+export const above95Only = data => {
+  let results = [];
+
+  data.forEach(day => {
+    let currentDay = [day[0], [], []];
+
+    day[2].map((e, i) => {
+      if (parseFloat(e) > 95) {
+        currentDay[1].push(day[1][i]);
+        currentDay[2].push(e);
+      }
+    });
+    if (currentDay[2].length > 0) {
+      results.push(currentDay);
+    }
+  });
+
+  return results;
 };
