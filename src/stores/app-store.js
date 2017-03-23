@@ -46,7 +46,7 @@ export default class AppStore {
   @observable stateR = {};
   @action setStateR = d => this.stateR = d;
 
-  //Station--------------------------------------------------------------------------------------
+  //Station---------------------------------------------------------------------------------
   @observable stations = [];
   @action setStations = d => this.stations = d;
   @computed get stationsWithMatchedIcons() {
@@ -69,7 +69,7 @@ export default class AppStore {
   @observable stationR = {};
   @action setStationR = d => this.stationR = d;
 
-  // Dates---------------------------------------------------------------------------------------
+  // Dates-------------------------------------------------------------------------------------
   @observable currentYear = new Date().getFullYear().toString();
   @observable endDate = JSON.parse(localStorage.getItem("endDate")) ||
     format(new Date(), "YYYY-MM-DD");
