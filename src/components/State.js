@@ -2,7 +2,7 @@ import React, { Component } from "react";
 import { inject, observer } from "mobx-react";
 
 // Utilities
-import { states } from "../utils";
+import { states } from "../states";
 
 // styled-components
 import { Select, Selector } from "./styles";

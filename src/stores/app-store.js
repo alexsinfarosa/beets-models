@@ -1,10 +1,6 @@
 import { observable, action, computed } from "mobx";
-import {
-  states,
-  matchIconsToStations,
-  lookUpToTable,
-  cumulativeDICV
-} from "../utils";
+import { matchIconsToStations, lookUpToTable, cumulativeDICV } from "../utils";
+import { states } from "../states";
 import { table } from "../views/Results/table";
 import { format } from "date-fns";
 
@@ -142,20 +138,6 @@ export default class AppStore {
       };
     });
   }
-  // @computed get A14Day() {
-  //   const arrStart = this.DICV.slice(0, 14);
-  //   const sumArrStart = arrStart.reduce((acc, val) => acc + val);
-  //   let results = this.DICV.slice(14);
-  //   results.unshift(sumArrStart);
-  //   return cumulativeDICV(results);
-  // }
-  // @computed get A21Day() {
-  //   const arrStart = this.DICV.slice(0, 21);
-  //   const sumArrStart = arrStart.reduce((acc, val) => acc + val);
-  //   let results = this.DICV.slice(21);
-  //   results.unshift(sumArrStart);
-  //   return cumulativeDICV(results);
-  // }
   @computed get season() {
     return cumulativeDICV(this.DICV);
   }
