@@ -1,1 +1,1 @@
-### Beet Model
+### Beets Models
