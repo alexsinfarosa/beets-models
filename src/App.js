@@ -87,6 +87,7 @@ class App extends Component {
 
     this.getData();
     this.props.store.app.setIsSubmitted(true);
+    // this.props.store.app.setIsLoading(false);
   };
 
   // Making the calls -----------------------------------------------------------------------
@@ -105,7 +106,8 @@ class App extends Component {
     acis = await fetchACISData(station, startDate, endDate);
     acis = replaceNonConsecutiveMissingValues(acis);
     if (!containsMissingValues(acis)) {
-      return acis;
+      const shiftedACISData = noonToNoon(station, acis);
+      this.props.store.app.setACISData(shiftedACISData);
     }
 
     // Get Id and network to fetch sister station data
@@ -120,7 +122,8 @@ class App extends Component {
     );
     acis = replaceConsecutiveMissingValues(sisterStationData, acis);
     if (!containsMissingValues(acis) && currentYear !== startDateYear) {
-      return acis;
+      const shiftedACISData = noonToNoon(station, acis);
+      this.props.store.app.setACISData(shiftedACISData);
     }
 
     const forecastData = await fetchForecastData(station, startDate, endDate);
@@ -129,6 +132,7 @@ class App extends Component {
     const shiftedACISData = noonToNoon(station, acis);
     this.props.store.app.setACISData(shiftedACISData);
     this.props.store.app.setIsLoading(false);
+    console.log("ciccio");
   }
 
   render() {
@@ -137,6 +141,8 @@ class App extends Component {
       isSubmitted,
       areRequiredFieldsSet
     } = this.props.store.app;
+    // console.log(this.props.store.app.isLoading);
+    // console.log(this.props.store.app.isSubmitted);
 
     return (
       <Router>
