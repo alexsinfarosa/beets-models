@@ -87,7 +87,7 @@ class App extends Component {
 
     this.getData();
     this.props.store.app.setIsSubmitted(true);
-    // this.props.store.app.setIsLoading(false);
+    this.props.store.app.setIsLoading(false);
   };
 
   // Making the calls -----------------------------------------------------------------------
@@ -108,7 +108,9 @@ class App extends Component {
     if (!containsMissingValues(acis)) {
       const shiftedACISData = noonToNoon(station, acis);
       this.props.store.app.setACISData(shiftedACISData);
+      return;
     }
+    console.log("1");
 
     // Get Id and network to fetch sister station data
     const idAndNetwork = await getSisterStationIdAndNetwork(station);
@@ -124,15 +126,15 @@ class App extends Component {
     if (!containsMissingValues(acis) && currentYear !== startDateYear) {
       const shiftedACISData = noonToNoon(station, acis);
       this.props.store.app.setACISData(shiftedACISData);
+      return;
     }
-
+    console.log("2");
     const forecastData = await fetchForecastData(station, startDate, endDate);
     acis = replaceConsecutiveMissingValues(forecastData, acis);
 
     const shiftedACISData = noonToNoon(station, acis);
     this.props.store.app.setACISData(shiftedACISData);
-    this.props.store.app.setIsLoading(false);
-    console.log("ciccio");
+    return;
   }
 
   render() {
