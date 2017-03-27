@@ -1,0 +1,117 @@
+[
+  {
+    "id": 1,
+    "formalName": "Pissodes strobi",
+    "informalName": "White Pine Weevil",
+    "biofixPhenology": "First Trap Catch",
+    "baseTemp": 50,
+    "preBiofix": [
+      {
+        "id": 1,
+        "stage": "Overwintering adults become active",
+        "status": "Adults active",
+        "ddlo": 1,
+        "ddhi": 1000,
+        "phenologicalMarkers": "Silver maple blooming",
+        "scouting": "Scout for feeding wounds on leaders, sap dripping",
+        "management": "Begin trapping. Pesticide applications when day temperatures reach 50F",
+        "biologicalControl": ""
+      },
+      {
+        "id": 2,
+        "stage": "Larvae mature",
+        "ddlo": 1001,
+        "ddhi": 25000,
+        "phenologicalMarkers": "Before  mockorange or mountain laurel bloom",
+        "status": "Larvae maturing",
+        "scouting": "Drooping leaders - 'shepherd's crook'",
+        "management": "Prune out and destroy drooping leaders. Cut below bark discoloration",
+        "biologicalControl": ""
+      }
+    ]
+  },
+  {
+    "id": 2,
+    "formalName": "Oligonychus Ununguis",
+    "informalName": "Spruce Spider Mite",
+    "biofixPhenology": "First Trap Catch",
+    "baseTemp": 50,
+    "preBiofix": [
+      {
+        "id": 1,
+        "stage": "egg",
+        "ddlo": 1,
+        "ddhi": 1000,
+        "phenologicalMarkers": "Pussy willow blooming",
+        "status": "Overwintering eggs hatch",
+        "scouting": "Stippled older needles from previous year's population",
+        "management": "Dormant oil spray",
+        "biologicalControl": ""
+      },
+      {
+        "id": 2,
+        "stage": "nymph/adult",
+        "ddlo": 1001,
+        "ddhi": 2000,
+        "phenologicalMarkers": "Redbud blooming",
+        "status": "Nymphs and adults active",
+        "scouting": "Tap branches over white paper. If more than 10 mites/tap, apply pesticides",
+        "management": "Spring pesticide treatment. Mites most active in cooler temperatures - 60's-70's F",
+        "biologicalControl": "Predaceous mites - may be killed if using pesticides, lady bugs, dusty wings"
+      },
+      {
+        "id": 3,
+        "stage": "nymph/adult",
+        "ddlo": 2001,
+        "ddhi": 25000,
+        "phenologicalMarkers": "Witch hazel blooming",
+        "status": "Nymphs and adults active",
+        "scouting": "Tap branches over white paper. If more than 10 mites/tap, apply pesticides",
+        "management": "Fall pesticide treatment. Mites most active in cooler temperatures - 60's-70's F. Dormant oil sprays",
+        "biologicalControl": "Predaceous mites - may be killed if using pesticides, ladybugs, dusty wings"
+      }
+    ]
+  },
+  {
+    "id": 3,
+    "formalName": "Monarthropalpus flavus",
+    "informalName": "Boxwood Leaf Miner",
+    "biofixPhenology": "First Trap Catch",
+    "baseTemp": 50,
+    "preBiofix": [
+      {
+        "id": 1,
+        "stage": "adults",
+        "ddlo": 1,
+        "ddhi": 1000,
+        "phenologicalMarkers": "Weigela",
+        "status": "Adults emerge from mines",
+        "scouting": "Yellowish mines noticeable on underside of leaf",
+        "management": "Pesticide application",
+        "biologicalControl": "Use resistant varieties. Few parasites"
+      },
+      {
+        "id": 2,
+        "stage": "eggs",
+        "ddlo": 1001,
+        "ddhi": 2000,
+        "phenologicalMarkers": "Shoot elongation of boxwood",
+        "status": "",
+        "scouting": "Hold leaves up to light to see eggs",
+        "management": "Prune severely infested foliage",
+        "biologicalControl": ""
+      },
+      {
+        "id": 3,
+        "stage": "larvae",
+        "ddlo": 2001,
+        "ddhi": 25000,
+        "phenologicalMarkers": "Leaf maturation of boxwood",
+        "status": "Larvae creating new mines",
+        "scouting": "Scout for new mines on underside of leaf",
+        "management": "Foliar pesticide application",
+        "biologicalControl": ""
+      }
+    ]
+  }
+]
