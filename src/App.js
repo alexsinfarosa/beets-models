@@ -61,7 +61,7 @@ class App extends Component {
 
   fetchAllStations = () => {
     axios
-      .get("http://newa.nrcc.cornell.edu/newaUtil/stateStationList/all")
+      .get("https://newa2.nrcc.cornell.edu/newaUtil/stateStationList/all")
       .then(res => {
         this.props.store.app.setStations(res.data.stations);
         this.calculate();
@@ -104,13 +104,14 @@ class App extends Component {
 
     // Fetch ACIS data
     acis = await fetchACISData(station, startDate, endDate);
+    // acis.map(e => console.log(e));
     acis = replaceNonConsecutiveMissingValues(acis);
+    // logData(acis);
     if (!containsMissingValues(acis)) {
       const shiftedACISData = noonToNoon(station, acis);
       this.props.store.app.setACISData(shiftedACISData);
       return;
     }
-    console.log("1");
 
     // Get Id and network to fetch sister station data
     const idAndNetwork = await getSisterStationIdAndNetwork(station);

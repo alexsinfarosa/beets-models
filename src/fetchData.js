@@ -38,7 +38,7 @@ export const fetchACISData = (station, startDate, endDate) => {
 // Get sister station Id and network --------------------------------------------------------
 export const getSisterStationIdAndNetwork = station => {
   return axios(
-    `http://newa.nrcc.cornell.edu/newaUtil/stationSisterInfo/${station.id}/${station.network}`
+    `https://newa2.nrcc.cornell.edu/newaUtil/stationSisterInfo/${station.id}/${station.network}`
   )
     .then(res => {
       return res.data.temp;
@@ -88,7 +88,7 @@ export const fetchSisterStationData = (
 export const fetchForecastTemps = (station, startDate, endDate) => {
   return axios
     .get(
-      `http://newa.nrcc.cornell.edu/newaUtil/getFcstData/${station.id}/${station.network}/temp/${startDate}/${format(addDays(endDate, 6), "YYYY-MM-DD")}`
+      `https://newa2.nrcc.cornell.edu/newaUtil/getFcstData/${station.id}/${station.network}/temp/${startDate}/${format(addDays(endDate, 6), "YYYY-MM-DD")}`
     )
     .then(res => {
       if (!res.data.hasOwnProperty("error")) {
@@ -105,7 +105,7 @@ export const fetchForecastTemps = (station, startDate, endDate) => {
 export const fetchForecastRH = (station, startDate, endDate) => {
   return axios
     .get(
-      `http://newa.nrcc.cornell.edu/newaUtil/getFcstData/${station.id}/${station.network}/rhum/${startDate}/${format(addDays(endDate, 6), "YYYY-MM-DD")}`
+      `https://newa2.nrcc.cornell.edu/newaUtil/getFcstData/${station.id}/${station.network}/rhum/${startDate}/${format(addDays(endDate, 6), "YYYY-MM-DD")}`
     )
     .then(res => {
       if (!res.data.hasOwnProperty("error")) {

@@ -160,7 +160,7 @@ export const noonToNoon = (station, data) => {
       }
     });
   }
-  // console.log(`${humFlatNum}`);
+  console.log(`${humFlatNum}`);
 
   // Filter relative humidity values above the chosen percentage
   // If there are NaN values it replaces with 0
@@ -185,6 +185,7 @@ export const noonToNoon = (station, data) => {
   const tempFlatNumAbove95RH = humFlatNumAbove95RH.map(
     (e, i) => e === 0 ? 0 : tempFlatNum[i]
   );
+  console.log(`${tempFlatNumAbove95RH}`);
 
   // unflatten the temperature array
   const tempNumAbove95RH = [];
@@ -225,6 +226,7 @@ export const noonToNoon = (station, data) => {
       avgT: avgT[i]
     });
   });
+  console.log(res);
   return res;
 };
 
