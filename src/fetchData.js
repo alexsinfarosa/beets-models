@@ -38,7 +38,7 @@ export const fetchACISData = (station, startDate, endDate) => {
 // Get sister station Id and network --------------------------------------------------------
 export const getSisterStationIdAndNetwork = station => {
   return axios(
-    `https://newa2.nrcc.cornell.edu/newaUtil/stationSisterInfo/${station.id}/${station.network}`
+    `http://newa.nrcc.cornell.edu/newaUtil/stationSisterInfo/${station.id}/${station.network}`
   )
     .then(res => {
       return res.data.temp;
@@ -69,7 +69,7 @@ export const fetchSisterStationData = (
     ]
   };
 
-  // console.log(params);
+  console.log(params);
 
   return axios
     .post("http://data.test.rcc-acis.org/StnData", params)
@@ -88,7 +88,7 @@ export const fetchSisterStationData = (
 export const fetchForecastTemps = (station, startDate, endDate) => {
   return axios
     .get(
-      `https://newa2.nrcc.cornell.edu/newaUtil/getFcstData/${station.id}/${station.network}/temp/${startDate}/${format(addDays(endDate, 6), "YYYY-MM-DD")}`
+      `http://newa.nrcc.cornell.edu/newaUtil/getFcstData/${station.id}/${station.network}/temp/${startDate}/${format(addDays(endDate, 6), "YYYY-MM-DD")}`
     )
     .then(res => {
       if (!res.data.hasOwnProperty("error")) {
@@ -105,7 +105,7 @@ export const fetchForecastTemps = (station, startDate, endDate) => {
 export const fetchForecastRH = (station, startDate, endDate) => {
   return axios
     .get(
-      `https://newa2.nrcc.cornell.edu/newaUtil/getFcstData/${station.id}/${station.network}/rhum/${startDate}/${format(addDays(endDate, 6), "YYYY-MM-DD")}`
+      `http://newa.nrcc.cornell.edu/newaUtil/getFcstData/${station.id}/${station.network}/rhum/${startDate}/${format(addDays(endDate, 6), "YYYY-MM-DD")}`
     )
     .then(res => {
       if (!res.data.hasOwnProperty("error")) {
@@ -126,12 +126,14 @@ export const fetchForecastData = (station, startDate, endDate) => {
       fetchForecastRH(station, startDate, endDate)
     ])
     .then(res => {
-      const datesAndTemps = res[0];
+      const dates = res[0].map(day => day[0]);
+      const TP = res[0].map(day => day[1]);
       const RH = res[1].map(day => day[1]);
-      let data = datesAndTemps.map((day, i) => {
-        return day.concat([RH[i]]);
+      let results = [];
+      dates.map((day, i) => {
+        return results.push([dates[i], TP[i], RH[i]]);
       });
-      return data;
+      return results;
     })
     .catch(err => {
       console.log(err);

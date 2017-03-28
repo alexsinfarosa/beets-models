@@ -16,10 +16,11 @@ import {
 
 // utility functions
 import {
-  noonToNoon,
+  currentModel,
   replaceNonConsecutiveMissingValues,
   containsMissingValues,
-  replaceConsecutiveMissingValues
+  replaceConsecutiveMissingValues,
+  logData
 } from "./utils";
 
 // styled-components
@@ -61,7 +62,8 @@ class App extends Component {
 
   fetchAllStations = () => {
     axios
-      .get("https://newa2.nrcc.cornell.edu/newaUtil/stateStationList/all")
+      // rhum = station reporting relative humidity
+      .get("http://newa.nrcc.cornell.edu/newaUtil/stateStationList/all")
       .then(res => {
         this.props.store.app.setStations(res.data.stations);
         this.calculate();
@@ -104,12 +106,13 @@ class App extends Component {
 
     // Fetch ACIS data
     acis = await fetchACISData(station, startDate, endDate);
-    // acis.map(e => console.log(e));
+    // logData(acis.slice(0, 3));
     acis = replaceNonConsecutiveMissingValues(acis);
-    // logData(acis);
+    // logData(acis.slice(0, 3));
+
     if (!containsMissingValues(acis)) {
-      const shiftedACISData = noonToNoon(station, acis);
-      this.props.store.app.setACISData(shiftedACISData);
+      acis = currentModel(station, acis);
+      this.props.store.app.setACISData(acis);
       return;
     }
 
@@ -123,18 +126,20 @@ class App extends Component {
       currentYear,
       startDateYear
     );
+
     acis = replaceConsecutiveMissingValues(sisterStationData, acis);
+    // logData(acis.slice(0, 3));
     if (!containsMissingValues(acis) && currentYear !== startDateYear) {
-      const shiftedACISData = noonToNoon(station, acis);
-      this.props.store.app.setACISData(shiftedACISData);
+      acis = currentModel(station, acis);
+      this.props.store.app.setACISData(acis);
       return;
     }
-    console.log("2");
-    const forecastData = await fetchForecastData(station, startDate, endDate);
-    acis = replaceConsecutiveMissingValues(forecastData, acis);
 
-    const shiftedACISData = noonToNoon(station, acis);
-    this.props.store.app.setACISData(shiftedACISData);
+    const forecastData = await fetchForecastData(station, startDate, endDate);
+    // logData(forecastData);
+    acis = replaceConsecutiveMissingValues(forecastData, acis);
+    acis = currentModel(station, acis);
+    this.props.store.app.setACISData(acis);
     return;
   }
 
