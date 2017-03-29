@@ -65,9 +65,10 @@ class App extends Component {
   }
 
   fetchAllStations = () => {
+    const protocol = this.props.store.app.protocol;
     axios
       // rhum = station reporting relative humidity
-      .get("http://newa.nrcc.cornell.edu/newaUtil/stateStationList/all")
+      .get(`${protocol}//newa2.nrcc.cornell.edu/newaUtil/stateStationList/all`)
       .then(res => {
         this.props.store.app.setStations(res.data.stations);
         if (this.props.store.app.areRequiredFieldsSet) {
@@ -105,20 +106,20 @@ class App extends Component {
       endDate,
       setIsResults,
       setIsGraphDisplayed,
-      setIsLoading
+      setIsLoading,
+      protocol
     } = this.props.store.app;
 
     let acis = [];
 
     // Fetch ACIS data
-    acis = await fetchACISData(station, startDate, endDate);
+    acis = await fetchACISData(protocol, station, startDate, endDate);
     // logData(acis.slice(0, 3));
     acis = replaceNonConsecutiveMissingValues(acis);
     // logData(acis.slice(0, 3));
 
     if (!containsMissingValues(acis)) {
       acis = currentModel(station, acis);
-      console.log("ACIS");
       this.props.store.app.setACISData(acis);
       setIsGraphDisplayed(true);
       setIsResults();
@@ -127,8 +128,9 @@ class App extends Component {
     }
 
     // Get Id and network to fetch sister station data
-    const idAndNetwork = await getSisterStationIdAndNetwork(station);
+    const idAndNetwork = await getSisterStationIdAndNetwork(protocol, station);
     const sisterStationData = await fetchSisterStationData(
+      protocol,
       idAndNetwork,
       station,
       startDate,
@@ -141,7 +143,6 @@ class App extends Component {
     // logData(acis.slice(0, 3));
     if (currentYear !== startDateYear) {
       acis = currentModel(station, acis);
-      console.log("Sister");
       this.props.store.app.setACISData(acis);
       setIsGraphDisplayed(true);
       setIsResults();
@@ -149,11 +150,15 @@ class App extends Component {
       return;
     }
 
-    let forecastData = await fetchForecastData(station, startDate, endDate);
+    let forecastData = await fetchForecastData(
+      protocol,
+      station,
+      startDate,
+      endDate
+    );
     forecastData = RHAdjustment(forecastData);
     acis = replaceConsecutiveMissingValues(forecastData, acis);
     acis = currentModel(station, acis);
-    console.log("Forecast");
     this.props.store.app.setACISData(acis);
     setIsGraphDisplayed(true);
     setIsResults();

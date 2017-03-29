@@ -7,9 +7,10 @@ import L from "leaflet";
 // styled-components
 import { MapContainer } from "./styles";
 
-const myIcon = e => L.icon({
-  iconUrl: e
-});
+const myIcon = e =>
+  L.icon({
+    iconUrl: e
+  });
 
 @inject("store")
 @observer
@@ -39,7 +40,7 @@ export default class TheMap extends Component {
 
   render() {
     // const position = [this.state.lat, this.state.lng];
-    const { stationsWithMatchedIcons, state } = this.props.store.app;
+    const { stationsWithMatchedIcons, state, protocol } = this.props.store.app;
 
     const MarkerList = stationsWithMatchedIcons.map(station => (
       <Marker
@@ -64,7 +65,9 @@ export default class TheMap extends Component {
         zoom={Object.keys(state).length === 0 ? 6 : state.zoom}
       >
         <TileLayer
-          url="http://server.arcgisonline.com/ArcGIS/rest/services/Ocean_Basemap/MapServer/tile/{z}/{y}/{x}"
+          url={
+            `${protocol}//server.arcgisonline.com/ArcGIS/rest/services/Ocean_Basemap/MapServer/tile/{z}/{y}/{x}`
+          }
         />
         {MarkerList}
       </MapContainer>

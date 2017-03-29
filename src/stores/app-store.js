@@ -6,6 +6,7 @@ import { format } from "date-fns";
 
 export default class AppStore {
   // logic------------------------------------------------------------------------------------
+  @observable protocol = window.location.protocol;
   @observable isSubmitted = false;
   @action setIsSubmitted = d => {
     this.isSubmitted = d;
@@ -76,7 +77,7 @@ export default class AppStore {
   @observable stations = [];
   @action setStations = d => this.stations = d;
   @computed get stationsWithMatchedIcons() {
-    return matchIconsToStations(this.stations, this.state);
+    return matchIconsToStations(this.protocol, this.stations, this.state);
   }
   @computed get getCurrentStateStations() {
     return this.stations.filter(

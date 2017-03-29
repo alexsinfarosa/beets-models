@@ -2,14 +2,14 @@ import { table } from "./table";
 
 // Returns an array of objects. Each object is a station with the following
 // properties: TO DO...
-export const matchIconsToStations = (stations, state) => {
+export const matchIconsToStations = (protocol, stations, state) => {
   const arr = [];
-  const newa = "http://newa.nrcc.cornell.edu/gifs/newa_small.png";
-  const newaGray = "http://newa.nrcc.cornell.edu/gifs/newa_smallGray.png";
-  const airport = "http://newa.nrcc.cornell.edu/gifs/airport.png";
-  const airportGray = "http://newa.nrcc.cornell.edu/gifs/airportGray.png";
-  const culog = "http://newa.nrcc.cornell.edu/gifs/culog.png";
-  const culogGray = "http://newa.nrcc.cornell.edu/gifs/culogGray.png";
+  const newa = `${protocol}//newa2.nrcc.cornell.edu/gifs/newa_small.png`;
+  const newaGray = `${protocol}//newa2.nrcc.cornell.edu/gifs/newa_smallGray.png`;
+  const airport = `${protocol}//newa2.nrcc.cornell.edu/gifs/airport.png`;
+  const airportGray = `${protocol}//newa2.nrcc.cornell.edu/gifs/airportGray.png`;
+  const culog = `${protocol}//newa2.nrcc.cornell.edu/gifs/culog.png`;
+  const culogGray = `${protocol}//newa2.nrcc.cornell.edu/gifs/culogGray.png`;
 
   stations.forEach(station => {
     if (
