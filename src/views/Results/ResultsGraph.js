@@ -59,13 +59,13 @@ export default class ResultsTable extends Component {
           2-Day Infection Values
         </Text>
         <ComposedChart
-          width={654}
+          width={610}
           height={320}
           data={graphData}
           margin={{ top: 0, right: 20, left: -30, bottom: 5 }}
         >
-          <XAxis dataKey="dates" name="ciccio" tick={<CustomLabel />} />
-          <YAxis dataKey="a2Day" name="bello" />
+          <XAxis dataKey="dates" tick={<CustomLabel />} />
+          <YAxis dataKey="a2Day" />
           <Tooltip content={renderTooltip} offset={20} />
           <Legend
             wrapperStyle={{ paddingTop: "30px" }}
@@ -73,9 +73,9 @@ export default class ResultsTable extends Component {
             iconSize={16}
             iconType="rect"
             payload={[
-              { value: "Unfavorable", type: "rect", color: "#A3FDA1" },
-              { value: "Marginal", type: "rect", color: "#FDFAB0" },
-              { value: "Favorable", type: "rect", color: "#FFA0A0" }
+              { value: "Low", type: "rect", color: "#A3FDA1" },
+              { value: "Moderate", type: "rect", color: "#FDFAB0" },
+              { value: "High", type: "rect", color: "#FFA0A0" }
             ]}
           />
           <Rectangle x={20} y={30} width={50} height={50} fill="red" />
@@ -84,7 +84,7 @@ export default class ResultsTable extends Component {
             name="Favorable"
             type="monotone"
             stackId="1"
-            dataKey="favorable"
+            dataKey="high"
             stroke="#FFA0A0"
             fill="#FFA0A0"
             opacity={0.7}
@@ -94,7 +94,7 @@ export default class ResultsTable extends Component {
             name="Marginal"
             type="monotone"
             stackId="2"
-            dataKey="marginal"
+            dataKey="moderate"
             stroke="#FDFAB0"
             fill="#FDFAB0"
             opacity={0.7}
@@ -104,7 +104,7 @@ export default class ResultsTable extends Component {
             name="Unfavorable"
             type="monotone"
             stackId="3"
-            dataKey="unfavorable"
+            dataKey="low"
             stroke="#A3FDA1"
             fill="#A3FDA1"
             opacity={0.7}

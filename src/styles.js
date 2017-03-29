@@ -13,7 +13,7 @@ export const MyApp = styled.div`
   border: 1px solid #eee;
   border-radius: 5px;
   width: 915px;
-  min-height: 715px;
+  height: 650px;
   overflow-y: auto;
   display: flex;
   flex-direction: column;
@@ -28,6 +28,10 @@ export const Main = styled.div`
   width: 100%;
   height: 100%;
   flex: 1;
+  justify-content: stretch;
+  align-items: stretch;
+  ${/* align-items: stretch; */ ""}
+  ${/* overflow-y: auto */ ""}
   ${/* background-color: orange; */ ""}
 `;
 
@@ -48,21 +52,19 @@ export const RightContainer = styled.div`
   display: flex;
   flex-direction: column;
   flex: 1;
-  padding: 10px;
-  padding-top: 0;
+  padding: 0 10px;
   border-radius: 5px;
-  ${/* overflow: auto; */ ""}
-  ${/* height: 100%; */ ""}
+  overflow-y: auto;
 `;
 
 export const Ul = styled.ul`
   list-style: none;
+  min-height: 45px;
   margin: 0;
   margin-top: 5px;
   margin-bottom: 10px;
   padding: 0;
   display: flex;
-  align-items: stretch;
   border: 1px solid #d49768;
   border-radius: 5px;
   font-family: Helvetica,Arial,sans-serif;

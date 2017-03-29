@@ -27,7 +27,7 @@ export default class CustomBar extends Component {
   render() {
     const { x, y, height, width, a2Day } = this.props;
     // console.log(this.props);
-    if (a2Day < 6) {
+    if (a2Day >= 0 && a2Day <= 3) {
       return (
         <rect
           x={x}
@@ -39,7 +39,7 @@ export default class CustomBar extends Component {
           onMouseOut={this.setDefaultColor}
         />
       );
-    } else if (a2Day === 6) {
+    } else if (a2Day >= 4 && a2Day <= 6) {
       return (
         <rect
           x={x}

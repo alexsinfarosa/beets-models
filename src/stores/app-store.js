@@ -1,7 +1,7 @@
 import { observable, action, computed } from "mobx";
 import { matchIconsToStations, lookUpToTable, cumulativeDICV } from "../utils";
 import { states } from "../states";
-import { table } from "../views/Results/table";
+// import { table } from "../views/Results/table";
 import { format } from "date-fns";
 
 export default class AppStore {
@@ -108,12 +108,7 @@ export default class AppStore {
     return this.ACISData.map(e => e.hrsRH);
   }
   @computed get DICV() {
-    return this.ACISData.map((day, i) => {
-      if (day.avgT > 58 && day.avgT < 95) {
-        return lookUpToTable(table, day.hrsRH.toString(), day.avgT.toString());
-      }
-      return 0;
-    });
+    return this.ACISData.map(e => e.dicv);
   }
   @computed get A2Day() {
     return this.DICV.map((e, i) => {
@@ -123,7 +118,6 @@ export default class AppStore {
       return e;
     });
   }
-  @computed get infectionRisk() {}
 
   @computed get graphData() {
     return this.ACISData.map((day, i) => {
@@ -132,9 +126,9 @@ export default class AppStore {
         daily: this.DICV[i],
         a2Day: this.A2Day[i],
         hrs: this.hrsRHs[i],
-        unfavorable: 5,
-        marginal: 6,
-        favorable: Math.max(...this.A2Day)
+        low: 3,
+        moderate: 6,
+        high: Math.max(...this.A2Day)
       };
     });
   }

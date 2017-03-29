@@ -69,21 +69,21 @@ export default class ResultsTable extends Component {
     const daily = DICV.map((e, i) => <td key={i}>{e}</td>);
 
     const displayA2Day = A2Day.map((e, i) => {
-      if (e < 6) {
+      if (e >= 0 && e <= 3) {
         return <Low key={i}>{e}</Low>;
-      } else if (e === 6) {
+      } else if (e >= 4 && e <= 6) {
         return <Caution key={i}>{e}</Caution>;
       }
       return <High key={i}>{e}</High>;
     });
 
     const a2DayInfectionRisk = A2Day.map((e, i) => {
-      if (e < 6) {
-        return <Low key={i}><small>Unfavorable</small></Low>;
-      } else if (e === 6) {
-        return <Caution key={i}><small>Marginal</small></Caution>;
+      if (e >= 0 && e <= 3) {
+        return <Low key={i}><small>Low</small></Low>;
+      } else if (e >= 4 && e <= 6) {
+        return <Caution key={i}><small>Moderate</small></Caution>;
       }
-      return <High key={i}><small>Favorable</small></High>;
+      return <High key={i}><small>High</small></High>;
     });
 
     const displayA14Day = A14Day.map((e, i) => <td key={i}>{e}</td>);

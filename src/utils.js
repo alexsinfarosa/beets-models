@@ -1,9 +1,78 @@
+import { table } from "./table";
+
+// Returns an array of objects. Each object is a station with the following
+// properties: TO DO...
+export const matchIconsToStations = (stations, state) => {
+  const arr = [];
+  const newa = "http://newa.nrcc.cornell.edu/gifs/newa_small.png";
+  const newaGray = "http://newa.nrcc.cornell.edu/gifs/newa_smallGray.png";
+  const airport = "http://newa.nrcc.cornell.edu/gifs/airport.png";
+  const airportGray = "http://newa.nrcc.cornell.edu/gifs/airportGray.png";
+  const culog = "http://newa.nrcc.cornell.edu/gifs/culog.png";
+  const culogGray = "http://newa.nrcc.cornell.edu/gifs/culogGray.png";
+
+  stations.forEach(station => {
+    if (
+      station.network === "newa" ||
+      station.network === "njwx" ||
+      station.network === "miwx" ||
+      (station.network === "cu_log" && station.state !== "NY")
+    ) {
+      const newObj = station;
+      station.state === state.postalCode || state.postalCode === "ALL"
+        ? (newObj["icon"] = newa)
+        : (newObj["icon"] = newaGray);
+      arr.push(newObj);
+    } else if (station.network === "cu_log") {
+      const newObj = station;
+      station.state === state.postalCode || state.postalCode === "ALL"
+        ? (newObj["icon"] = culog)
+        : (newObj["icon"] = culogGray);
+      newObj["icon"] = culog;
+      arr.push(newObj);
+    } else if (station.network === "icao") {
+      const newObj = station;
+      station.state === state.postalCode || state.postalCode === "ALL"
+        ? (newObj["icon"] = airport)
+        : (newObj["icon"] = airportGray);
+      arr.push(newObj);
+    }
+  });
+  return arr;
+};
+
 // Returns the average of two numbers.
-// Inputs are of type String
 export const avgTwoStringNumbers = (a, b) => {
   const aNum = parseFloat(a);
   const bNum = parseFloat(b);
   return Math.round((aNum + bNum) / 2).toString();
+};
+
+// Handling Temperature parameter and Michigan network id adjustment
+export const networkTemperatureAdjustment = network => {
+  // Handling different temperature parameter for each network
+  if (network === "newa" || network === "icao" || network === "njwx") {
+    return "23";
+  } else if (network === "miwx" || network === "cu_log") {
+    return "126";
+  }
+};
+
+// Handling Relative Humidity Adjustment
+export const networkHumidityAdjustment = network =>
+  network === "miwx" ? "143" : "24";
+
+// Handling Michigan state network adjustment
+export const michiganIdAdjustment = station => {
+  if (
+    station.state === "MI" &&
+    station.network === "miwx" &&
+    station.id.slice(0, 3) === "ew_"
+  ) {
+    // example: ew_ITH
+    return station.id.slice(3, 6);
+  }
+  return station.id;
 };
 
 // It replaces non consecutive values in data with the average
@@ -49,15 +118,6 @@ export const replaceConsecutiveMissingValues = (sister, acis) => {
   });
 };
 
-// Returns true if the temperature array in data has at least one M value
-// export const containsMissingValues = data => {
-//   const numOfMissingValues = data.map(day => day[1].find(e => e === "M"));
-//   if (numOfMissingValues.find(e => e === "M") === "M") {
-//     return true;
-//   }
-//   return false;
-// };
-
 // Returns true if the there are Missing values in the sub arrays (TP, RH, LW, PT)
 export const containsMissingValues = data => {
   const TPandRH = data
@@ -65,16 +125,6 @@ export const containsMissingValues = data => {
     .reduce((acc, val) => acc + val, 0);
 
   return TPandRH > 0 ? true : false;
-};
-
-// Handling Temperature parameter and Michigan network id adjustment
-export const networkTemperatureAdjustment = network => {
-  // Handling different temperature parameter for each network
-  if (network === "newa" || network === "icao" || network === "njwx") {
-    return "23";
-  } else if (network === "miwx" || network === "cu_log") {
-    return "126";
-  }
 };
 
 // Returns an array similar to ACIS with the rh sub array containing new values.
@@ -99,33 +149,21 @@ export const RHAdjustment = data => {
   });
 };
 
-// Handling Relative Humidity Adjustment
-export const networkHumidityAdjustment = network =>
-  network === "miwx" ? "143" : "24";
+// Returns array of Accumulation Infection Values
+// export const accumulationInfectionValues = data => {
+//   const arr = [];
+//   data.reduce((prev, curr, i) => arr[i] = prev + curr, 0);
+//   return arr;
+// };
 
-// Returns and array of Accumulation Infection Values
-export const accumulationInfectionValues = data => {
+// Returns an array with cumulative Daily Infection Critical Values
+export const cumulativeDICV = dicv => {
   const arr = [];
-  data.reduce((prev, curr, i) => arr[i] = prev + curr, 0);
+  dicv.reduce((prev, curr, i) => arr[i] = prev + curr, 0);
   return arr;
 };
 
-// Handling Michigan state network adjustment
-export const michiganIdAdjustment = station => {
-  if (
-    station.state === "MI" &&
-    station.network === "miwx" &&
-    station.id.slice(0, 3) === "ew_"
-  ) {
-    // example: ew_ITH
-    return station.id.slice(3, 6);
-  }
-  return station.id;
-};
-
-// Returns an array similar to ACIS. The rh array contains only values
-// above 85. The temp array contains only temperature values where rh was
-// above 85.
+// Returns array containing only temperature values where rh was above 85.
 export const above85 = data => {
   let results = [];
 
@@ -143,6 +181,7 @@ export const above85 = data => {
   return results;
 };
 
+// Returns average
 export const average = data => {
   if (data.length === 0) {
     return 0;
@@ -197,40 +236,6 @@ export const noonToNoon = data => {
   return results;
 };
 
-export const currentModel = (station, data) => {
-  // logData(data.slice(0, 3));
-  // shift the data to (1,24)
-
-  let results = noonToNoon(data);
-
-  results = results.slice(0, -1);
-  // logData(results.slice(0, 3));
-
-  // If station is 'icao' adjust RH values
-  if (station.network === "icao") {
-    results = RHAdjustment(results);
-  }
-
-  // filter RH above 85
-
-  results = above85(results);
-  // logData(results.slice(0, 3));
-
-  // Build an array of objects with what you need...!
-  let arr = [];
-  for (const day of results) {
-    arr.push({
-      date: day[0],
-      temp: day[1],
-      rh: day[2],
-      hrsRH: day[2].length,
-      avgT: average(day[1])
-    });
-  }
-  // console.log(arr);
-  return arr;
-};
-
 // Determine Daily Infection Condition Values (DICV) from the table
 export const lookUpToTable = (table, hrsRH, avgT) => {
   const temps = table.filter(e => e[hrsRH])[0][hrsRH];
@@ -238,66 +243,46 @@ export const lookUpToTable = (table, hrsRH, avgT) => {
   return hums[avgT];
 };
 
-// Returns an array with cumulative Daily Infection Critical Values
-export const cumulativeDICV = dicv => {
-  const arr = [];
-  dicv.reduce((prev, curr, i) => arr[i] = prev + curr, 0);
-  return arr;
-};
+// Returns an array of objects. Current application model
+export const currentModel = (station, data) => {
+  // shift the data to (1,24)
+  let results = noonToNoon(data);
+  results = results.slice(0, -1);
 
-// Returns an array of objects. Each object is a station with the following
-// properties: TO DO...
-export const matchIconsToStations = (stations, state) => {
-  const arr = [];
-  const newa = "http://newa.nrcc.cornell.edu/gifs/newa_small.png";
-  const newaGray = "http://newa.nrcc.cornell.edu/gifs/newa_smallGray.png";
-  const airport = "http://newa.nrcc.cornell.edu/gifs/airport.png";
-  const airportGray = "http://newa.nrcc.cornell.edu/gifs/airportGray.png";
-  const culog = "http://newa.nrcc.cornell.edu/gifs/culog.png";
-  const culogGray = "http://newa.nrcc.cornell.edu/gifs/culogGray.png";
+  // If station is 'icao' adjust RH values
+  if (station.network === "icao") {
+    results = RHAdjustment(results);
+  }
 
-  stations.forEach(station => {
-    if (
-      station.network === "newa" ||
-      station.network === "njwx" ||
-      station.network === "miwx" ||
-      (station.network === "cu_log" && station.state !== "NY")
-    ) {
-      const newObj = station;
-      station.state === state.postalCode || state.postalCode === "ALL"
-        ? (newObj["icon"] = newa)
-        : (newObj["icon"] = newaGray);
-      arr.push(newObj);
-    } else if (station.network === "cu_log") {
-      const newObj = station;
-      station.state === state.postalCode || state.postalCode === "ALL"
-        ? (newObj["icon"] = culog)
-        : (newObj["icon"] = culogGray);
-      newObj["icon"] = culog;
-      arr.push(newObj);
-    } else if (station.network === "icao") {
-      const newObj = station;
-      station.state === state.postalCode || state.postalCode === "ALL"
-        ? (newObj["icon"] = airport)
-        : (newObj["icon"] = airportGray);
-      arr.push(newObj);
+  // filter RH above 85
+  results = above85(results);
+
+  // Build an array of objects with what you need...!
+  let arr = [];
+  for (const day of results) {
+    const hrsRH = day[2].length;
+    const avgT = average(day[1]);
+    let DICV;
+    if (avgT > 58 && avgT < 95) {
+      DICV = table[hrsRH.toString()][avgT.toString()];
+    } else {
+      DICV = 0;
     }
-  });
+    arr.push({
+      date: day[0],
+      temp: day[1],
+      rh: day[2],
+      hrsRH: hrsRH,
+      avgT: avgT,
+      dicv: DICV
+    });
+  }
+  console.log(arr);
   return arr;
 };
 
+// Returns styled console.logs
 export const logData = data => {
-  // const label = ([raw]) => {
-  //   const [color, label, ...message] = raw.split(" ");
-  //   return [
-  //     `%c${label}%c ${message.join(" ")}`,
-  //     `color: white;
-  //       background: ${color};
-  //       padding: .2em .2em`,
-  //     ""
-  //   ];
-  // };
-
   for (const day of data) {
     const M = day
       .filter(d => Array.isArray(d))
@@ -320,21 +305,5 @@ export const logData = data => {
       `,
       `background: #D8D8D8`
     );
-    // console.log(
-    //   `LW -> %c${M[2]} %c${day[3]}`,
-    //   `color: red;
-    //     font-size: 12px;
-    //     margin-right: 10px;
-    //   `,
-    //   `background: #73EBC3`
-    // );
-    // console.log(
-    //   `PT -> %c${M[3]} %c${day[4]}`,
-    //   `color: red;
-    //     font-size: 12px;
-    //     margin-right: 10px;
-    //   `,
-    //   `background: #81CCF4`
-    // );
   }
 };
