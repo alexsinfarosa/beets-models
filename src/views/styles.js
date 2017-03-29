@@ -7,6 +7,13 @@ export const Wrapper = styled.div`
   font-family: serif;
 `;
 
+export const Centered = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 450px;
+`;
+
 export const Link = styled.a`
   display: flex;
   flex-direction: column;
@@ -23,7 +30,7 @@ export const Link = styled.a`
 `;
 
 export const MapContainer = styled(Map)`
-  height: 558px;
+  height: 490px;
   width: 100%;
   margin: 0 auto;
 `;

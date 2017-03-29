@@ -3,7 +3,6 @@ import { inject, observer } from "mobx-react";
 import { when } from "mobx";
 // import { toJS } from "mobx";
 import DevTools from "mobx-react-devtools";
-import { BrowserRouter as Router, Route, Redirect } from "react-router-dom";
 import axios from "axios";
 
 // fetch functions
@@ -20,7 +19,7 @@ import {
   replaceNonConsecutiveMissingValues,
   containsMissingValues,
   replaceConsecutiveMissingValues,
-  logData
+  RHAdjustment
 } from "./utils";
 
 // styled-components
@@ -32,8 +31,12 @@ import {
   RightContainer,
   CalculateBtn,
   Ul,
-  NavLinkStyled
+  Li,
+  A
 } from "./styles";
+
+// styles
+import "./index.styl";
 
 // components
 import Testing from "./components/Testing";
@@ -46,6 +49,7 @@ import Calendar from "./components/Calendar";
 import TheMap from "./views/TheMap";
 import Results from "./views/Results/Results";
 import MoreInfo from "./views/MoreInfo";
+import Home from "./views/Home";
 
 @inject("store")
 @observer
@@ -66,8 +70,9 @@ class App extends Component {
       .get("http://newa.nrcc.cornell.edu/newaUtil/stateStationList/all")
       .then(res => {
         this.props.store.app.setStations(res.data.stations);
-        this.calculate();
-        this.props.store.app.setIsGraphDisplayed(true);
+        if (this.props.store.app.areRequiredFieldsSet) {
+          this.calculate();
+        }
       })
       .catch(err => {
         console.log(err);
@@ -88,8 +93,6 @@ class App extends Component {
     this.props.store.app.setEndDateR(endDate);
 
     this.getData();
-    this.props.store.app.setIsSubmitted(true);
-    this.props.store.app.setIsLoading(false);
   };
 
   // Making the calls -----------------------------------------------------------------------
@@ -99,7 +102,10 @@ class App extends Component {
       currentYear,
       startDateYear,
       startDate,
-      endDate
+      endDate,
+      setIsResults,
+      setIsGraphDisplayed,
+      setIsLoading
     } = this.props.store.app;
 
     let acis = [];
@@ -112,7 +118,11 @@ class App extends Component {
 
     if (!containsMissingValues(acis)) {
       acis = currentModel(station, acis);
+      console.log("ACIS");
       this.props.store.app.setACISData(acis);
+      setIsGraphDisplayed(true);
+      setIsResults();
+      setIsLoading(false);
       return;
     }
 
@@ -129,118 +139,108 @@ class App extends Component {
 
     acis = replaceConsecutiveMissingValues(sisterStationData, acis);
     // logData(acis.slice(0, 3));
-    if (!containsMissingValues(acis) && currentYear !== startDateYear) {
+    if (currentYear !== startDateYear) {
       acis = currentModel(station, acis);
+      console.log("Sister");
       this.props.store.app.setACISData(acis);
+      setIsGraphDisplayed(true);
+      setIsResults();
+      setIsLoading(false);
       return;
     }
 
-    const forecastData = await fetchForecastData(station, startDate, endDate);
-    // logData(forecastData);
+    let forecastData = await fetchForecastData(station, startDate, endDate);
+    forecastData = RHAdjustment(forecastData);
     acis = replaceConsecutiveMissingValues(forecastData, acis);
     acis = currentModel(station, acis);
+    console.log("Forecast");
     this.props.store.app.setACISData(acis);
+    setIsGraphDisplayed(true);
+    setIsResults();
+    setIsLoading(false);
     return;
   }
 
   render() {
     const {
-      state,
-      isSubmitted,
-      areRequiredFieldsSet
+      areRequiredFieldsSet,
+      isMap,
+      isResults,
+      isMoreInfo,
+      setIsMap,
+      setIsResults,
+      setIsMoreInfo,
+      isLoading
     } = this.props.store.app;
-    // console.log(this.props.store.app.isLoading);
-    // console.log(this.props.store.app.isSubmitted);
+
+    const ViewComponent = () => {
+      if (isMap) {
+        return <TheMap />;
+      } else if (isResults) {
+        return <Results />;
+      } else if (isMoreInfo) {
+        return <MoreInfo />;
+      }
+      return <Home />;
+    };
 
     return (
-      <Router>
-        <Page>
-          <DevTools />
-          <MyApp>
-            <Testing />
-            <h2 style={{ marginTop: "0" }}>
-              Cercospora Beticola Infection Prediction Model
-            </h2>
-            <Main>
-              <LeftContainer>
+      <Page>
+        <DevTools />
+        <MyApp>
+          <Testing />
+          <h2 style={{ marginTop: "0" }}>
+            Cercospora Beticola Infection Prediction Model
+          </h2>
+          <Main>
+            <LeftContainer>
 
-                <Disease />
-                <br />
-                <State />
-                <br />
-                <Station />
-                <br />
-                <Calendar />
-                <br />
-                {areRequiredFieldsSet
-                  ? <CalculateBtn onClick={this.calculate}>
-                      Calculate
-                    </CalculateBtn>
-                  : <CalculateBtn inactive onClick={this.calculate}>
-                      Calculate
-                    </CalculateBtn>}
+              <Disease />
+              <br />
+              <State />
+              <br />
+              <Station />
+              <br />
+              <Calendar />
+              <br />
+              {areRequiredFieldsSet
+                ? <CalculateBtn onClick={this.calculate}>
+                    Calculate
+                  </CalculateBtn>
+                : <CalculateBtn inactive onClick={this.calculate}>
+                    Calculate
+                  </CalculateBtn>}
 
-              </LeftContainer>
+            </LeftContainer>
 
-              <RightContainer>
+            <RightContainer>
+              <Ul>
+                <Li onClick={setIsMap} className={isMap ? "active" : null}>
+                  <A>Map</A>
+                </Li>
+                {!isLoading
+                  ? <Li
+                      onClick={setIsResults}
+                      className={isResults ? "active" : null}
+                    >
+                      <A>Results</A>
+                    </Li>
+                  : null}
+                <Li
+                  onClick={setIsMoreInfo}
+                  className={isMoreInfo ? "active" : null}
+                >
+                  <A>More Info</A>
+                </Li>
+              </Ul>
 
-                <Ul>
-                  <NavLinkStyled
-                    exact
-                    activeStyle={{
-                      color: "#b85700",
-                      backgroundColor: "#F4F0EC",
-                      marginBottom: "-1px"
-                    }}
-                    to="/map"
-                  >
-                    Map
-                  </NavLinkStyled>
-                  <NavLinkStyled
-                    exact
-                    activeStyle={{
-                      color: "#b85700",
-                      backgroundColor: "#F4F0EC",
-                      marginBottom: "-1px"
-                    }}
-                    to="/results"
-                  >
-                    Results
-                  </NavLinkStyled>
-                  <NavLinkStyled
-                    exact
-                    activeStyle={{
-                      color: "#b85700",
-                      backgroundColor: "#F4F0EC",
-                      marginBottom: "-1px"
-                    }}
-                    to="/moreinfo"
-                  >
-                    More Info
-                  </NavLinkStyled>
-                </Ul>
-
-                <Route
-                  exact
-                  path="/"
-                  render={() =>
-                    Object.keys(state).length !== 0 && <Redirect to="/map" />}
-                />
-                <Route path="/map" component={TheMap} />
-
-                <Route
-                  path="/"
-                  render={() => isSubmitted && <Redirect to="/results" />}
-                />
-                <Route path="/results" component={Results} />
-
-                <Route path="/moreinfo" component={MoreInfo} />
-
-              </RightContainer>
-            </Main>
-          </MyApp>
-        </Page>
-      </Router>
+              <div>
+                {ViewComponent()}
+              </div>
+            </RightContainer>
+          </Main>
+        </MyApp>
+      </Page>
     );
   }
 }

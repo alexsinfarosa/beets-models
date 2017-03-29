@@ -1,5 +1,5 @@
 import { observable, action, computed } from "mobx";
-import { matchIconsToStations, lookUpToTable, cumulativeDICV } from "../utils";
+import { matchIconsToStations, cumulativeDICV } from "../utils";
 import { states } from "../states";
 // import { table } from "../views/Results/table";
 import { format } from "date-fns";
@@ -7,7 +7,9 @@ import { format } from "date-fns";
 export default class AppStore {
   // logic------------------------------------------------------------------------------------
   @observable isSubmitted = false;
-  @action setIsSubmitted = d => this.isSubmitted = d;
+  @action setIsSubmitted = d => {
+    this.isSubmitted = d;
+  };
   @observable isLoading = true;
   @action setIsLoading = d => this.isLoading = d;
   @observable missingValue = 0;
@@ -17,12 +19,31 @@ export default class AppStore {
       this.disease.length !== 0;
   }
   @observable isGraphDisplayed = false;
-  @action setIsGraphDisplayed = () =>
-    this.isGraphDisplayed = !this.isGraphDisplayed;
+  @action setIsGraphDisplayed = d => this.isGraphDisplayed = d;
   @observable dailyGraph = true;
   @action setDailyGraph = () => this.dailyGraph = !this.dailyGraph;
   @observable barColor;
   @action setBarColor = d => this.barColor = d;
+
+  // Router ------------------------------------------------------------------------------------
+  @observable isMap = false;
+  @action setIsMap = () => {
+    this.isMap = true;
+    this.isResults = false;
+    this.isMoreInfo = false;
+  };
+  @observable isResults = false;
+  @action setIsResults = () => {
+    this.isMap = false;
+    this.isResults = true;
+    this.isMoreInfo = false;
+  };
+  @observable isMoreInfo = false;
+  @action setIsMoreInfo = () => {
+    this.isMap = false;
+    this.isResults = false;
+    this.isMoreInfo = true;
+  };
 
   //Disease------------------------------------------------------------------------------------
   @observable disease = JSON.parse(localStorage.getItem("disease")) || "";
@@ -42,7 +63,12 @@ export default class AppStore {
     localStorage.setItem("state", JSON.stringify(this.state));
   };
   @observable selectState = this.state.name ? true : false;
-  @action setSelectState = d => this.selectState = d;
+  @action setSelectState = d => {
+    this.selectState = d;
+    if (this.isLoading) {
+      this.setIsMap();
+    }
+  };
   @observable stateR = {};
   @action setStateR = d => this.stateR = d;
 

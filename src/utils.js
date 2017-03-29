@@ -53,7 +53,9 @@ export const networkTemperatureAdjustment = network => {
   // Handling different temperature parameter for each network
   if (network === "newa" || network === "icao" || network === "njwx") {
     return "23";
-  } else if (network === "miwx" || network === "cu_log") {
+  } else if (
+    network === "miwx" || (network === "cu_log" || network === "culog")
+  ) {
     return "126";
   }
 };
@@ -171,7 +173,7 @@ export const above85 = data => {
     let currentDay = [day[0], [], []];
 
     for (let [i, e] of day[2].entries()) {
-      if (parseFloat(e) > 95) {
+      if (parseFloat(e) > 85) {
         currentDay[1].push(day[1][i]);
         currentDay[2].push(e);
       }
@@ -277,7 +279,7 @@ export const currentModel = (station, data) => {
       dicv: DICV
     });
   }
-  console.log(arr);
+  // console.log(arr);
   return arr;
 };
 

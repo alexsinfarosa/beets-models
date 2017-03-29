@@ -1,5 +1,4 @@
 import styled from "styled-components";
-import { NavLink } from "react-router-dom";
 
 export const Page = styled.div`
   display: flex;
@@ -13,7 +12,7 @@ export const MyApp = styled.div`
   border: 1px solid #eee;
   border-radius: 5px;
   width: 915px;
-  height: 650px;
+  min-height: 650px;
   overflow-y: auto;
   display: flex;
   flex-direction: column;
@@ -71,7 +70,7 @@ export const Ul = styled.ul`
   background: linear-gradient(#cb842e, #d49768 );
 `;
 
-export const NavLinkStyled = styled(NavLink)`
+export const Li = styled.li`
   display: flex;
   justify-content: center;
   align-items: center;
@@ -86,24 +85,20 @@ export const NavLinkStyled = styled(NavLink)`
   cursor: pointer;
   color: #544C45;
 
-  &:visited {
-    color: #544C45;
-    background-color: #F4F0EC;
-    margin-bottom: -1px;
+  cursor: pointer;
+
+  cursor: ${props => props.inactive && "not-allowed"};
+  pointer-events: ${props => props.inactive && "none"};
+  ${/* opacity: ${props => props.inactive && "0.8"}; */ ""}
+  & > a {
+    color: ${props => props.inactive && "#ede4d4"}
   }
-  &:focus {
-    color: #b85700;
-    background-color: #F4F0EC;
-    margin-bottom: -1px;
-  }
-  &:hover {
-    background-color: #f4f0ec;
-    color: #b85700;
-  }
-  &:active {
-    background-color: #f4f0ec;
-    color: #b85700;
-  }
+`;
+
+export const A = styled.a`
+  text-decoration: none;
+  color: #544C45;
+
 `;
 
 export const CalculateBtn = styled.button`
