@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import { inject, observer } from "mobx-react";
-import { format } from "date-fns";
+import format from "date-fns/format";
 
 // styled-components
 import { CenterText } from "./styles";

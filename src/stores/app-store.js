@@ -1,8 +1,7 @@
 import { observable, action, computed } from "mobx";
 import { matchIconsToStations, cumulativeDICV } from "../utils";
 import { states } from "../states";
-// import { table } from "../views/Results/table";
-import { format } from "date-fns";
+import format from "date-fns/format";
 
 export default class AppStore {
   // logic------------------------------------------------------------------------------------
@@ -163,7 +162,7 @@ export default class AppStore {
     return cumulativeDICV(this.DICV);
   }
   @computed get A14Day() {
-    const partial = this.DICV.slice(-22); // to be fixed if date is to close to April 23rd
+    const partial = this.DICV.slice(-22);
     return cumulativeDICV(partial);
   }
   @computed get A21Day() {

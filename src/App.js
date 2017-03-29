@@ -1,8 +1,6 @@
 import React, { Component } from "react";
 import { inject, observer } from "mobx-react";
 import { when } from "mobx";
-// import { toJS } from "mobx";
-import DevTools from "mobx-react-devtools";
 import axios from "axios";
 
 // fetch functions
@@ -39,7 +37,6 @@ import {
 import "./index.styl";
 
 // components
-import Testing from "./components/Testing";
 import Disease from "./components/Disease";
 import State from "./components/State";
 import Station from "./components/Station";
@@ -114,9 +111,8 @@ class App extends Component {
 
     // Fetch ACIS data
     acis = await fetchACISData(protocol, station, startDate, endDate);
-    // logData(acis.slice(0, 3));
+
     acis = replaceNonConsecutiveMissingValues(acis);
-    // logData(acis.slice(0, 3));
 
     if (!containsMissingValues(acis)) {
       acis = currentModel(station, acis);
@@ -140,7 +136,6 @@ class App extends Component {
     );
 
     acis = replaceConsecutiveMissingValues(sisterStationData, acis);
-    // logData(acis.slice(0, 3));
     if (currentYear !== startDateYear) {
       acis = currentModel(station, acis);
       this.props.store.app.setACISData(acis);
@@ -191,9 +186,7 @@ class App extends Component {
 
     return (
       <Page>
-        <DevTools />
         <MyApp>
-          <Testing />
           <h2 style={{ marginTop: "0" }}>
             Cercospora Beticola Infection Prediction Model
           </h2>

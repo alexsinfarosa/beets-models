@@ -1,7 +1,6 @@
 import { table } from "./table";
 
 // Returns an array of objects. Each object is a station with the following
-// properties: TO DO...
 export const matchIconsToStations = (protocol, stations, state) => {
   const arr = [];
   const newa = `${protocol}//newa2.nrcc.cornell.edu/gifs/newa_small.png`;
@@ -151,13 +150,6 @@ export const RHAdjustment = data => {
   });
 };
 
-// Returns array of Accumulation Infection Values
-// export const accumulationInfectionValues = data => {
-//   const arr = [];
-//   data.reduce((prev, curr, i) => arr[i] = prev + curr, 0);
-//   return arr;
-// };
-
 // Returns an array with cumulative Daily Infection Critical Values
 export const cumulativeDICV = dicv => {
   const arr = [];
@@ -238,13 +230,6 @@ export const noonToNoon = data => {
   return results;
 };
 
-// Determine Daily Infection Condition Values (DICV) from the table
-export const lookUpToTable = (table, hrsRH, avgT) => {
-  const temps = table.filter(e => e[hrsRH])[0][hrsRH];
-  const hums = temps.filter(e => Object.keys(e)[0] === avgT)[0];
-  return hums[avgT];
-};
-
 // Returns an array of objects. Current application model
 export const currentModel = (station, data) => {
   // shift the data to (1,24)
@@ -279,7 +264,6 @@ export const currentModel = (station, data) => {
       dicv: DICV
     });
   }
-  // console.log(arr);
   return arr;
 };
 

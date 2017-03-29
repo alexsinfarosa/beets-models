@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import { inject, observer } from "mobx-react";
-import { states } from "../utils";
+import { states } from "../states";
 import { TileLayer, Marker } from "react-leaflet";
 import L from "leaflet";
 

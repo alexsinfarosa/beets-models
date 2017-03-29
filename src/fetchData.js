@@ -1,7 +1,6 @@
 import axios from "axios";
 import format from "date-fns/format";
 import addDays from "date-fns/add_days";
-import _ from "lodash";
 import {
   michiganIdAdjustment,
   networkTemperatureAdjustment,
@@ -22,7 +21,6 @@ export const fetchACISData = (protocol, station, startDate, endDate) => {
   };
 
   // console.log(params);
-
   return axios
     .post(`${protocol}//data.nrcc.rcc-acis.org/StnData`, params)
     .then(res => {
@@ -72,7 +70,6 @@ export const fetchSisterStationData = (
   };
 
   // console.log(params);
-
   return axios
     .post(`${protocol}//data.nrcc.rcc-acis.org/StnData`, params)
     .then(res => {
@@ -94,7 +91,6 @@ export const fetchForecastTemps = (protocol, station, startDate, endDate) => {
     )
     .then(res => {
       if (!res.data.hasOwnProperty("error")) {
-        console.log(_.flatten(res.data.data.map(day => day[1])).toString());
         return res.data.data;
       }
       console.log(res.data.error);

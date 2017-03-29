@@ -1,8 +1,10 @@
 import React, { Component } from "react";
 import { inject, observer } from "mobx-react";
 import ResultsGraph from "./ResultsGraph";
-import _ from "lodash";
-import { format, isBefore, subDays } from "date-fns";
+import takeRight from "lodash/takeRight";
+import format from "date-fns/format";
+import isBefore from "date-fns/is_before";
+import subDays from "date-fns/sub_days";
 
 // styles
 import "./results.css";
@@ -65,7 +67,6 @@ export default class ResultsTable extends Component {
       );
     }
 
-    // const displayA2Day = A2Day.map((e, i) => <td key={i}>{e}</td>);
     const daily = DICV.map((e, i) => <td key={i}>{e}</td>);
 
     const displayA2Day = A2Day.map((e, i) => {
@@ -102,33 +103,33 @@ export default class ResultsTable extends Component {
           </tr>
           <tr>
             {/* <th /> */}
-            {_.takeRight(months, 8)}
+            {takeRight(months, 8)}
           </tr>
         </thead>
         <tbody>
           <tr>
             <th><small>Daily <br />Infection Values</small></th>
-            {_.takeRight(daily, 8)}
+            {takeRight(daily, 8)}
           </tr>
           <tr>
             <th><small>2-Day <br /> Total Infection Values</small></th>
-            {_.takeRight(displayA2Day, 8)}
+            {takeRight(displayA2Day, 8)}
           </tr>
           <tr>
             <th><small>Daily <br /> Infection Risk</small></th>
-            {_.takeRight(a2DayInfectionRisk, 8)}
+            {takeRight(a2DayInfectionRisk, 8)}
           </tr>
           <tr>
             <th><small>14-Day <br />Accum. Infection Values</small></th>
-            {_.takeRight(displayA14Day, 8)}
+            {takeRight(displayA14Day, 8)}
           </tr>
           <tr>
             <th><small>21-Day <br /> Accum. Infection Values</small></th>
-            {_.takeRight(displayA21Day, 8)}
+            {takeRight(displayA21Day, 8)}
           </tr>
           <tr>
             <th><small>Season <br /> Total Infection Values</small></th>
-            {_.takeRight(displaySeason, 8)}
+            {takeRight(displaySeason, 8)}
           </tr>
           <tr>
             <td colSpan="9" className="has-text-centered graph">

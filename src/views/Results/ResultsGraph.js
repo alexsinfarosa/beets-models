@@ -14,7 +14,6 @@ import {
   Rectangle
 } from "recharts";
 import CustomLabel from "./CustomLabel";
-// import CustomToolTip from "./CustomToolTip";
 import CustomBar from "./CustomBar";
 
 // styles
@@ -32,7 +31,6 @@ export default class ResultsTable extends Component {
     const renderTooltip = props => {
       const { payload, label } = props;
       if (payload.length > 0) {
-        // console.log(payload[3]);
         return (
           <StyledTooltip>
             <h5>{format(label, "MMMM Do")}</h5>

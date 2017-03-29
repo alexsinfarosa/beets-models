@@ -1,21 +1,9 @@
 import React, { Component } from "react";
 
-
 export default class CustomToolTip extends Component {
-  getIntroOfPage(label) {
-    if (label === "Page A") {
-      return "Page A is about men's clothing";
-    } else if (label === "Page B") {
-      return "Page B is about women's dress";
-    }
-  }
-
   render() {
-    const { active } = this.props;
+    const { active, payload, label } = this.props;
     if (active) {
-      const { payload, label } = this.props;
-      console.log(label);
-      console.log(format(label, "MMMM Do"));
       return (
         <div>
           <p>
