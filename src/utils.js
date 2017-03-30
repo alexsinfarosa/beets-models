@@ -15,14 +15,15 @@ export const matchIconsToStations = (protocol, stations, state) => {
       station.network === "newa" ||
       station.network === "njwx" ||
       station.network === "miwx" ||
-      (station.network === "cu_log" && station.state !== "NY")
+      ((station.network === "cu_log" || station.network === "culog") &&
+        station.state !== "NY")
     ) {
       const newObj = station;
       station.state === state.postalCode || state.postalCode === "ALL"
         ? (newObj["icon"] = newa)
         : (newObj["icon"] = newaGray);
       arr.push(newObj);
-    } else if (station.network === "cu_log") {
+    } else if (station.network === "cu_log" || station.network === "culog") {
       const newObj = station;
       station.state === state.postalCode || state.postalCode === "ALL"
         ? (newObj["icon"] = culog)

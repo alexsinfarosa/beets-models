@@ -10,8 +10,7 @@ import {
   YAxis,
   Text,
   Tooltip,
-  Legend,
-  Rectangle
+  Legend
 } from "recharts";
 import CustomLabel from "./CustomLabel";
 import CustomBar from "./CustomBar";
@@ -63,7 +62,11 @@ export default class ResultsTable extends Component {
           margin={{ top: 0, right: 20, left: -30, bottom: 5 }}
         >
           <XAxis dataKey="dates" tick={<CustomLabel />} />
-          <YAxis dataKey="a2Day" />
+          <YAxis
+            dataKey="a2Day"
+            allowDecimals={false}
+            domain={["dataMin", "dataMax"]}
+          />
           <Tooltip content={renderTooltip} offset={20} />
           <Legend
             wrapperStyle={{ paddingTop: "30px" }}
@@ -76,7 +79,6 @@ export default class ResultsTable extends Component {
               { value: "High", type: "rect", color: "#FFA0A0" }
             ]}
           />
-          <Rectangle x={20} y={30} width={50} height={50} fill="red" />
           <Area
             activeDot={false}
             name="Favorable"

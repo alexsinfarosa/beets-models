@@ -24,7 +24,6 @@ class Station extends Component {
     const stationList = getCurrentStateStations.map(station => (
       <option key={`${station.id} ${station.network}`}>{station.name}</option>
     ));
-
     return (
       <Selector>
         <label>

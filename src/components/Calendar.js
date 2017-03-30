@@ -15,9 +15,10 @@ import { Selector } from "./styles";
 class Calendar extends Component {
   render() {
     const { endDate } = this.props.store.app;
+    const maxDate = `${getYear(subYears(new Date(), 1))}/07/07`;
     return (
       <Selector>
-        <label>Accumulation End Date:</label>
+        <label>Date of Interest:</label>
         <Flatpickr
           options={{
             enableTime: false,
@@ -25,8 +26,9 @@ class Calendar extends Component {
             altFormat: "F j, Y",
             inline: false, // show the calendar inline
             altInputClass: "input-calender",
-            defaultDate: endDate ? endDate : new Date(),
-            minDate: `${getYear(subYears(new Date(), 1))}/04/23`
+            defaultDate: endDate ? endDate : maxDate,
+            minDate: `${getYear(subYears(new Date(), 1))}/04/23`,
+            maxDate: maxDate
           }}
           onChange={d => this.props.store.app.setEndDate(d)}
         />

@@ -1,20 +1,19 @@
 input.input-calender {
-  -moz-appearance: none;
-  -webkit-appearance: none;
+  /*appearance: none;*/
   align-items: center;
   border: none;
   border-radius: 3px;
   box-shadow: none;
   display: inline-flex;
-  font-size: .8rem;
-  height: 1.45em;
+  font-size: 12px;
+  height: 1.6em;
   justify-content: flex-start;
   line-height: 1;
   padding-left: 0.60em;
   padding-right: 0.60em;
   position: relative;
   vertical-align: top;
-  /*background-color: white;*/
+  background-color: white;
   border: 1px solid #dbdbdb;
   color: black;
   max-width: 100%;

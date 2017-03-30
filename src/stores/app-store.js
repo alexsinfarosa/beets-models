@@ -146,6 +146,13 @@ export default class AppStore {
   }
 
   @computed get graphData() {
+    const a2DayMax = Math.max(...this.A2Day);
+    let high;
+    if (a2DayMax > 6) {
+      high = a2DayMax;
+    } else {
+      high = null;
+    }
     return this.ACISData.map((day, i) => {
       return {
         dates: format(this.dates[i], "MMM D"),
@@ -154,7 +161,7 @@ export default class AppStore {
         hrs: this.hrsRHs[i],
         low: 3,
         moderate: 6,
-        high: Math.max(...this.A2Day)
+        high: high
       };
     });
   }

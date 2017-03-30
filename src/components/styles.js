@@ -7,9 +7,11 @@ export const Selector = styled.div`
 `;
 
 export const Select = styled.select`
+  ${''/* appearance: none; */}
   margin-top: 5px;
   font-size: 12px;
-  background: white;
+  border-radius: 3px;
+  background: white !important;
   border: 1px solid #CECECE;
 
   &:focus {
