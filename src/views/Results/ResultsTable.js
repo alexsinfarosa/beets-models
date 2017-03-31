@@ -116,7 +116,7 @@ export default class ResultsTable extends Component {
             {takeRight(displayA2Day, 8)}
           </tr>
           <tr>
-            <th><small>Daily <br /> Infection Risk</small></th>
+            <th><small>2-Day <br /> Infection Risk</small></th>
             {takeRight(a2DayInfectionRisk, 8)}
           </tr>
           <tr>

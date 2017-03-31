@@ -18,7 +18,11 @@ class Calendar extends Component {
     const maxDate = `${getYear(subYears(new Date(), 1))}/07/07`;
     return (
       <Selector>
-        <label>Date of Interest:</label>
+        <label>
+          Date of Interest:
+          {" "}
+          <small style={{ fontSize: "10px" }}>April to July</small>
+        </label>
         <Flatpickr
           options={{
             enableTime: false,

@@ -28,9 +28,9 @@ class Station extends Component {
       <Selector>
         <label>
           Weather station:
-          <small style={{ paddingLeft: "5px" }}>
+          {/* <small style={{ paddingLeft: "5px" }}>
             {getCurrentStateStations.length}
-          </small>
+          </small> */}
         </label>
 
         <Select
